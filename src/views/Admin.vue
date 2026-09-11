@@ -17,15 +17,18 @@ const backgroundImage = ref('')
 const fileInput = ref(null)
 
 
+// =========================
 // Нийтлэлүүдийг унших
+// =========================
 
 async function loadArticles() {
 
   try {
 
-    const response = await fetch(
-      './articles.json'
-    )
+    const response =
+      await fetch(
+        './articles.json'
+      )
 
     if (!response.ok) {
       throw new Error(
@@ -50,17 +53,19 @@ async function loadArticles() {
 }
 
 
+// =========================
 // Background зураг
+// =========================
 
 function loadBackground() {
 
   backgroundImage.value =
-    localStorage.getItem(
-      'readerBackground'
-    ) || ''
+    './images/background.jpg'
 
 }
 
+
+// Зураг сонгох
 
 function chooseBackground() {
 
@@ -69,7 +74,11 @@ function chooseBackground() {
 }
 
 
-function handleBackgroundUpload(event) {
+// Зураг сервер рүү илгээх
+
+async function handleBackgroundUpload(
+  event
+) {
 
   const file =
     event.target.files[0]
@@ -77,6 +86,7 @@ function handleBackgroundUpload(event) {
   if (!file) {
     return
   }
+
 
   if (
     !file.type.startsWith(
@@ -92,31 +102,85 @@ function handleBackgroundUpload(event) {
   }
 
 
-  const reader =
-    new FileReader()
+  try {
+
+    const reader =
+      new FileReader()
 
 
-  reader.onload = () => {
+    reader.onload = async () => {
 
-    backgroundImage.value =
-      reader.result
+      try {
 
-    localStorage.setItem(
-      'readerBackground',
-      reader.result
+        const response =
+          await fetch(
+            '/api/background',
+            {
+              method: 'POST',
+
+              headers: {
+                'Content-Type':
+                  'application/json'
+              },
+
+              body: JSON.stringify({
+                image:
+                  reader.result
+              })
+            }
+          )
+
+
+        if (!response.ok) {
+
+          throw new Error(
+            'Зураг хадгалахад алдаа гарлаа'
+          )
+
+        }
+
+
+        backgroundImage.value =
+          './images/background.jpg'
+
+
+        alert(
+          'Background зураг хадгалагдлаа! 🎉'
+        )
+
+      } catch (error) {
+
+        console.error(error)
+
+        alert(
+          'Зураг хадгалахад алдаа гарлаа!'
+        )
+
+      }
+
+    }
+
+
+    reader.readAsDataURL(file)
+
+  } catch (error) {
+
+    console.error(error)
+
+    alert(
+      'Зураг уншихад алдаа гарлаа!'
     )
 
   }
 
-
-  reader.readAsDataURL(file)
-
 }
 
 
+// =========================
 // Background устгах
+// =========================
 
-function removeBackground() {
+async function removeBackground() {
 
   if (
     !confirm(
@@ -127,16 +191,49 @@ function removeBackground() {
   }
 
 
-  backgroundImage.value = ''
+  try {
 
-  localStorage.removeItem(
-    'readerBackground'
-  )
+    const response =
+      await fetch(
+        '/api/background',
+        {
+          method: 'DELETE'
+        }
+      )
+
+
+    if (!response.ok) {
+
+      throw new Error(
+        'Зураг устгахад алдаа гарлаа'
+      )
+
+    }
+
+
+    backgroundImage.value = ''
+
+
+    alert(
+      'Background зураг устгагдлаа.'
+    )
+
+  } catch (error) {
+
+    console.error(error)
+
+    alert(
+      'Зураг устгахад алдаа гарлаа!'
+    )
+
+  }
 
 }
 
 
+// =========================
 // Нийтлэл устгах
+// =========================
 
 async function deleteArticle(id) {
 
@@ -185,7 +282,6 @@ async function deleteArticle(id) {
       'Нийтлэл устгагдлаа.'
     )
 
-
   } catch (error) {
 
     console.error(error)
@@ -199,7 +295,9 @@ async function deleteArticle(id) {
 }
 
 
+// =========================
 // Гарах
+// =========================
 
 function logout() {
 
@@ -213,6 +311,10 @@ function logout() {
 
 }
 
+
+// =========================
+// Эхлүүлэх
+// =========================
 
 onMounted(() => {
 
@@ -273,13 +375,17 @@ onMounted(() => {
           type="file"
           accept="image/*"
           hidden
-          @change="handleBackgroundUpload"
+          @change="
+            handleBackgroundUpload
+          "
         />
 
 
         <button
           class="menu-link"
-          @click="chooseBackground"
+          @click="
+            chooseBackground
+          "
         >
           Зураг сонгох
         </button>
@@ -288,7 +394,9 @@ onMounted(() => {
         <button
           v-if="backgroundImage"
           class="remove-background"
-          @click="removeBackground"
+          @click="
+            removeBackground
+          "
         >
           Зураг устгах
         </button>
@@ -408,7 +516,9 @@ onMounted(() => {
           <div class="actions">
 
             <router-link
-              :to="`/admin/edit/${article.id}`"
+              :to="
+                `/admin/edit/${article.id}`
+              "
               class="edit"
             >
               Засах
@@ -417,7 +527,11 @@ onMounted(() => {
 
             <button
               class="delete"
-              @click="deleteArticle(article.id)"
+              @click="
+                deleteArticle(
+                  article.id
+                )
+              "
             >
               Устгах
             </button>

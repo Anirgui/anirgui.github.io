@@ -16,12 +16,28 @@ const publicFilePath = path.join(
   'articles.json'
 )
 
+const imageFolderPath = path.join(
+  __dirname,
+  '..',
+  'public',
+  'images'
+)
+
+const backgroundImagePath = path.join(
+  imageFolderPath,
+  'background.jpg'
+)
+
 function sendJSON(res, statusCode, data) {
   res.writeHead(statusCode, {
-    'Content-Type': 'application/json; charset=utf-8',
+    'Content-Type':
+      'application/json; charset=utf-8',
+
     'Access-Control-Allow-Origin': '*',
+
     'Access-Control-Allow-Methods':
       'GET, POST, PUT, DELETE, OPTIONS',
+
     'Access-Control-Allow-Headers':
       'Content-Type'
   })
@@ -29,262 +45,564 @@ function sendJSON(res, statusCode, data) {
   res.end(JSON.stringify(data))
 }
 
+
 const server = http.createServer(
   (req, res) => {
 
+    // =========================
     // OPTIONS
+    // =========================
+
     if (req.method === 'OPTIONS') {
       sendJSON(res, 200, {})
       return
     }
 
+
     // =========================
     // GET /api/articles
     // =========================
+
     if (
       req.method === 'GET' &&
       req.url === '/api/articles'
     ) {
+
       try {
-        const articles = JSON.parse(
-          fs.readFileSync(
-            serverFilePath,
-            'utf8'
+
+        const articles =
+          JSON.parse(
+            fs.readFileSync(
+              serverFilePath,
+              'utf8'
+            )
           )
+
+        sendJSON(
+          res,
+          200,
+          articles
         )
 
-        sendJSON(res, 200, articles)
       } catch (error) {
+
         console.error(error)
 
-        sendJSON(res, 500, {
-          error: 'Нийтлэл уншихад алдаа гарлаа'
-        })
+        sendJSON(
+          res,
+          500,
+          {
+            error:
+              'Нийтлэл уншихад алдаа гарлаа'
+          }
+        )
       }
 
       return
     }
 
+
     // =========================
     // POST /api/articles
     // =========================
+
     if (
       req.method === 'POST' &&
       req.url === '/api/articles'
     ) {
+
       let body = ''
 
-      req.on('data', chunk => {
-        body += chunk
-      })
-
-      req.on('end', () => {
-        try {
-          const newArticle = JSON.parse(body)
-
-          const articles = JSON.parse(
-            fs.readFileSync(
-              serverFilePath,
-              'utf8'
-            )
-          )
-
-          articles.unshift(newArticle)
-
-          const json = JSON.stringify(
-            articles,
-            null,
-            2
-          )
-
-          fs.writeFileSync(
-            serverFilePath,
-            json
-          )
-
-          fs.writeFileSync(
-            publicFilePath,
-            json
-          )
-
-          sendJSON(
-            res,
-            201,
-            newArticle
-          )
-
-        } catch (error) {
-          console.error(error)
-
-          sendJSON(res, 400, {
-            error:
-              'Нийтлэл нэмэхэд алдаа гарлаа'
-          })
+      req.on(
+        'data',
+        chunk => {
+          body += chunk
         }
-      })
+      )
+
+      req.on(
+        'end',
+        () => {
+
+          try {
+
+            const newArticle =
+              JSON.parse(body)
+
+            const articles =
+              JSON.parse(
+                fs.readFileSync(
+                  serverFilePath,
+                  'utf8'
+                )
+              )
+
+            articles.unshift(
+              newArticle
+            )
+
+            const json =
+              JSON.stringify(
+                articles,
+                null,
+                2
+              )
+
+            fs.writeFileSync(
+              serverFilePath,
+              json
+            )
+
+            fs.writeFileSync(
+              publicFilePath,
+              json
+            )
+
+            sendJSON(
+              res,
+              201,
+              newArticle
+            )
+
+          } catch (error) {
+
+            console.error(error)
+
+            sendJSON(
+              res,
+              400,
+              {
+                error:
+                  'Нийтлэл нэмэхэд алдаа гарлаа'
+              }
+            )
+          }
+        }
+      )
 
       return
     }
+
 
     // =========================
     // PUT /api/articles
     // =========================
+
     if (
       req.method === 'PUT' &&
       req.url === '/api/articles'
     ) {
+
       let body = ''
 
-      req.on('data', chunk => {
-        body += chunk
-      })
-
-      req.on('end', () => {
-        try {
-          const updatedArticle =
-            JSON.parse(body)
-
-          const articles = JSON.parse(
-            fs.readFileSync(
-              serverFilePath,
-              'utf8'
-            )
-          )
-
-          const index =
-            articles.findIndex(
-              article =>
-                article.id ===
-                updatedArticle.id
-            )
-
-          if (index === -1) {
-            sendJSON(res, 404, {
-              error:
-                'Нийтлэл олдсонгүй'
-            })
-
-            return
-          }
-
-          articles[index] = {
-            ...articles[index],
-            ...updatedArticle
-          }
-
-          const json = JSON.stringify(
-            articles,
-            null,
-            2
-          )
-
-          fs.writeFileSync(
-            serverFilePath,
-            json
-          )
-
-          fs.writeFileSync(
-            publicFilePath,
-            json
-          )
-
-          sendJSON(
-            res,
-            200,
-            articles[index]
-          )
-
-        } catch (error) {
-          console.error(error)
-
-          sendJSON(res, 400, {
-            error:
-              'Нийтлэл засахад алдаа гарлаа'
-          })
+      req.on(
+        'data',
+        chunk => {
+          body += chunk
         }
-      })
+      )
+
+      req.on(
+        'end',
+        () => {
+
+          try {
+
+            const updatedArticle =
+              JSON.parse(body)
+
+            const articles =
+              JSON.parse(
+                fs.readFileSync(
+                  serverFilePath,
+                  'utf8'
+                )
+              )
+
+            const index =
+              articles.findIndex(
+                article =>
+                  article.id ===
+                  updatedArticle.id
+              )
+
+            if (index === -1) {
+
+              sendJSON(
+                res,
+                404,
+                {
+                  error:
+                    'Нийтлэл олдсонгүй'
+                }
+              )
+
+              return
+            }
+
+            articles[index] = {
+              ...articles[index],
+              ...updatedArticle
+            }
+
+            const json =
+              JSON.stringify(
+                articles,
+                null,
+                2
+              )
+
+            fs.writeFileSync(
+              serverFilePath,
+              json
+            )
+
+            fs.writeFileSync(
+              publicFilePath,
+              json
+            )
+
+            sendJSON(
+              res,
+              200,
+              articles[index]
+            )
+
+          } catch (error) {
+
+            console.error(error)
+
+            sendJSON(
+              res,
+              400,
+              {
+                error:
+                  'Нийтлэл засахад алдаа гарлаа'
+              }
+            )
+          }
+        }
+      )
 
       return
     }
+
 
     // =========================
     // DELETE /api/articles
     // =========================
+
     if (
       req.method === 'DELETE' &&
       req.url === '/api/articles'
     ) {
+
       let body = ''
 
-      req.on('data', chunk => {
-        body += chunk
-      })
-
-      req.on('end', () => {
-        try {
-          const data = JSON.parse(body)
-
-          const articles = JSON.parse(
-            fs.readFileSync(
-              serverFilePath,
-              'utf8'
-            )
-          )
-
-          const newArticles =
-            articles.filter(
-              article =>
-                article.id !== data.id
-            )
-
-          const json = JSON.stringify(
-            newArticles,
-            null,
-            2
-          )
-
-          fs.writeFileSync(
-            serverFilePath,
-            json
-          )
-
-          fs.writeFileSync(
-            publicFilePath,
-            json
-          )
-
-          sendJSON(res, 200, {
-            message:
-              'Нийтлэл устгагдлаа'
-          })
-
-        } catch (error) {
-          console.error(error)
-
-          sendJSON(res, 400, {
-            error:
-              'Нийтлэл устгахад алдаа гарлаа'
-          })
+      req.on(
+        'data',
+        chunk => {
+          body += chunk
         }
-      })
+      )
+
+      req.on(
+        'end',
+        () => {
+
+          try {
+
+            const data =
+              JSON.parse(body)
+
+            const articles =
+              JSON.parse(
+                fs.readFileSync(
+                  serverFilePath,
+                  'utf8'
+                )
+              )
+
+            const newArticles =
+              articles.filter(
+                article =>
+                  article.id !==
+                  data.id
+              )
+
+            const json =
+              JSON.stringify(
+                newArticles,
+                null,
+                2
+              )
+
+            fs.writeFileSync(
+              serverFilePath,
+              json
+            )
+
+            fs.writeFileSync(
+              publicFilePath,
+              json
+            )
+
+            sendJSON(
+              res,
+              200,
+              {
+                message:
+                  'Нийтлэл устгагдлаа'
+              }
+            )
+
+          } catch (error) {
+
+            console.error(error)
+
+            sendJSON(
+              res,
+              400,
+              {
+                error:
+                  'Нийтлэл устгахад алдаа гарлаа'
+              }
+            )
+          }
+        }
+      )
 
       return
     }
 
+
+    // =========================
+    // POST /api/background
+    // =========================
+
+    if (
+      req.method === 'POST' &&
+      req.url === '/api/background'
+    ) {
+
+      let body = ''
+
+      req.on(
+        'data',
+        chunk => {
+          body += chunk
+        }
+      )
+
+      req.on(
+        'end',
+        () => {
+
+          try {
+
+            const data =
+              JSON.parse(body)
+
+            if (
+              !data.image ||
+              typeof data.image !== 'string'
+            ) {
+
+              sendJSON(
+                res,
+                400,
+                {
+                  error:
+                    'Зураг олдсонгүй'
+                }
+              )
+
+              return
+            }
+
+
+            const match =
+              data.image.match(
+                /^data:image\/([a-zA-Z0-9+.-]+);base64,(.+)$/
+              )
+
+            if (!match) {
+
+              sendJSON(
+                res,
+                400,
+                {
+                  error:
+                    'Зургийн формат буруу байна'
+                }
+              )
+
+              return
+            }
+
+
+            const extension =
+              match[1]
+                .toLowerCase()
+
+
+            if (
+              extension !== 'jpeg' &&
+              extension !== 'jpg' &&
+              extension !== 'png' &&
+              extension !== 'webp'
+            ) {
+
+              sendJSON(
+                res,
+                400,
+                {
+                  error:
+                    'Зөвхөн JPG, PNG, WEBP зураг зөвшөөрнө'
+                }
+              )
+
+              return
+            }
+
+
+            const base64Data =
+              match[2]
+
+
+            if (
+              !fs.existsSync(
+                imageFolderPath
+              )
+            ) {
+
+              fs.mkdirSync(
+                imageFolderPath,
+                {
+                  recursive: true
+                }
+              )
+            }
+
+
+            const imageBuffer =
+              Buffer.from(
+                base64Data,
+                'base64'
+              )
+
+
+            fs.writeFileSync(
+              backgroundImagePath,
+              imageBuffer
+            )
+
+
+            sendJSON(
+              res,
+              200,
+              {
+                message:
+                  'Background зураг хадгалагдлаа',
+
+                url:
+                  './images/background.jpg'
+              }
+            )
+
+          } catch (error) {
+
+            console.error(error)
+
+            sendJSON(
+              res,
+              400,
+              {
+                error:
+                  'Зураг хадгалахад алдаа гарлаа'
+              }
+            )
+          }
+        }
+      )
+
+      return
+    }
+
+
+    // =========================
+    // DELETE /api/background
+    // =========================
+
+    if (
+      req.method === 'DELETE' &&
+      req.url === '/api/background'
+    ) {
+
+      try {
+
+        if (
+          fs.existsSync(
+            backgroundImagePath
+          )
+        ) {
+
+          fs.unlinkSync(
+            backgroundImagePath
+          )
+        }
+
+
+        sendJSON(
+          res,
+          200,
+          {
+            message:
+              'Background зураг устгагдлаа'
+          }
+        )
+
+      } catch (error) {
+
+        console.error(error)
+
+        sendJSON(
+          res,
+          500,
+          {
+            error:
+              'Зураг устгахад алдаа гарлаа'
+          }
+        )
+      }
+
+      return
+    }
+
+
     // =========================
     // Бусад URL
     // =========================
-    sendJSON(res, 404, {
-      error: 'API route олдсонгүй'
-    })
+
+    sendJSON(
+      res,
+      404,
+      {
+        error:
+          'API route олдсонгүй'
+      }
+    )
   }
 )
+
 
 server.listen(
   PORT,
   () => {
+
     console.log(
       `API server: http://localhost:${PORT}`
     )
+
   }
 )
