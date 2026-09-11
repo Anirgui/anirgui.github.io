@@ -16,92 +16,228 @@ const backgroundImage = ref('')
 
 const fileInput = ref(null)
 
-function loadArticles() {
-  articles.value = JSON.parse(
-    localStorage.getItem('articles') || '[]'
-  )
+
+// Нийтлэлүүдийг унших
+
+async function loadArticles() {
+
+  try {
+
+    const response = await fetch(
+      './articles.json'
+    )
+
+    if (!response.ok) {
+      throw new Error(
+        'articles.json олдсонгүй'
+      )
+    }
+
+    articles.value =
+      await response.json()
+
+  } catch (error) {
+
+    console.error(
+      'Нийтлэл уншихад алдаа гарлаа:',
+      error
+    )
+
+    articles.value = []
+
+  }
+
 }
+
+
+// Background зураг
 
 function loadBackground() {
+
   backgroundImage.value =
-    localStorage.getItem('readerBackground') || ''
+    localStorage.getItem(
+      'readerBackground'
+    ) || ''
+
 }
+
 
 function chooseBackground() {
+
   fileInput.value.click()
+
 }
 
+
 function handleBackgroundUpload(event) {
-  const file = event.target.files[0]
+
+  const file =
+    event.target.files[0]
 
   if (!file) {
     return
   }
 
-  if (!file.type.startsWith('image/')) {
-    alert('Зөвхөн зураг сонгоно уу.')
+  if (
+    !file.type.startsWith(
+      'image/'
+    )
+  ) {
+
+    alert(
+      'Зөвхөн зураг сонгоно уу.'
+    )
+
     return
   }
 
-  const reader = new FileReader()
+
+  const reader =
+    new FileReader()
+
 
   reader.onload = () => {
-    backgroundImage.value = reader.result
+
+    backgroundImage.value =
+      reader.result
 
     localStorage.setItem(
       'readerBackground',
       reader.result
     )
+
   }
+
 
   reader.readAsDataURL(file)
+
 }
 
+
+// Background устгах
+
 function removeBackground() {
-  if (!confirm('Background зургийг устгах уу?')) {
+
+  if (
+    !confirm(
+      'Background зургийг устгах уу?'
+    )
+  ) {
     return
   }
+
 
   backgroundImage.value = ''
 
   localStorage.removeItem(
     'readerBackground'
   )
+
 }
 
-function deleteArticle(id) {
-  if (!confirm('Энэ нийтлэлийг устгах уу?')) {
+
+// Нийтлэл устгах
+
+async function deleteArticle(id) {
+
+  if (
+    !confirm(
+      'Энэ нийтлэлийг устгах уу?'
+    )
+  ) {
     return
   }
 
-  articles.value = articles.value.filter(
-    article => article.id !== id
-  )
 
-  localStorage.setItem(
-    'articles',
-    JSON.stringify(articles.value)
-  )
+  try {
+
+    const response =
+      await fetch(
+        '/api/articles',
+        {
+          method: 'DELETE',
+
+          headers: {
+            'Content-Type':
+              'application/json'
+          },
+
+          body: JSON.stringify({
+            id: id
+          })
+        }
+      )
+
+
+    if (!response.ok) {
+
+      throw new Error(
+        'Нийтлэл устгахад алдаа гарлаа'
+      )
+
+    }
+
+
+    await loadArticles()
+
+
+    alert(
+      'Нийтлэл устгагдлаа.'
+    )
+
+
+  } catch (error) {
+
+    console.error(error)
+
+    alert(
+      'Нийтлэл устгахад алдаа гарлаа!'
+    )
+
+  }
+
 }
+
+
+// Гарах
 
 function logout() {
-  localStorage.removeItem('adminLoggedIn')
-  router.push('/admin/login')
+
+  localStorage.removeItem(
+    'adminLoggedIn'
+  )
+
+  router.push(
+    '/admin/login'
+  )
+
 }
 
+
 onMounted(() => {
+
   loadArticles()
+
   loadBackground()
+
 })
+
 </script>
 
+
 <template>
+
   <div class="admin-page">
 
+
     <!-- Зүүн талын Admin цэс -->
+
     <aside class="sidebar">
 
-      <h2>Уншлагын танхим</h2>
+      <h2>
+        Уншлагын танхим
+      </h2>
+
 
       <router-link
         to="/admin/new"
@@ -109,6 +245,7 @@ onMounted(() => {
       >
         ✏️ Шинэ нийтлэл
       </router-link>
+
 
       <router-link
         to="/"
@@ -120,11 +257,16 @@ onMounted(() => {
 
       <!-- Background зураг -->
 
-      <div class="background-section">
+      <div
+        class="background-section"
+      >
 
-        <div class="background-title">
+        <div
+          class="background-title"
+        >
           🖼️ Background зураг
         </div>
+
 
         <input
           ref="fileInput"
@@ -134,12 +276,14 @@ onMounted(() => {
           @change="handleBackgroundUpload"
         />
 
+
         <button
           class="menu-link"
           @click="chooseBackground"
         >
           Зураг сонгох
         </button>
+
 
         <button
           v-if="backgroundImage"
@@ -149,18 +293,23 @@ onMounted(() => {
           Зураг устгах
         </button>
 
+
         <div
           v-if="backgroundImage"
           class="background-preview"
         >
+
           <img
             :src="backgroundImage"
             alt="Background preview"
           />
+
         </div>
 
       </div>
 
+
+      <!-- Гарах -->
 
       <button
         class="menu-link logout"
@@ -177,22 +326,29 @@ onMounted(() => {
     <main class="main">
 
       <div class="topbar">
-        <h1>Нийтлэлүүд</h1>
+
+        <h1>
+          Нийтлэлүүд
+        </h1>
+
       </div>
 
 
-      <!-- Нийтлэл байхгүй үед -->
+      <!-- Нийтлэл байхгүй -->
 
       <div
         v-if="articles.length === 0"
         class="empty"
       >
 
-        <h2>Одоогоор нийтлэл алга</h2>
+        <h2>
+          Одоогоор нийтлэл алга
+        </h2>
 
         <p>
           Шинэ нийтлэл үүсгээд Publish дарна уу.
         </p>
+
 
         <router-link
           to="/admin/new"
@@ -223,6 +379,7 @@ onMounted(() => {
               {{ article.title }}
             </h2>
 
+
             <div class="meta">
 
               <span>
@@ -237,7 +394,9 @@ onMounted(() => {
                 {{ article.date }}
               </span>
 
-              <span class="published">
+              <span
+                class="published"
+              >
                 Published
               </span>
 
@@ -255,6 +414,7 @@ onMounted(() => {
               Засах
             </router-link>
 
+
             <button
               class="delete"
               @click="deleteArticle(article.id)"
@@ -271,6 +431,7 @@ onMounted(() => {
     </main>
 
   </div>
+
 </template>
 
 

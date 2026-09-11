@@ -7,10 +7,19 @@ const selectedCategory = ref('Бүгд')
 
 const categories = ['Бүгд', 'Өгүүллэг', 'Шүлэг', 'Үлгэр']
 
-function loadArticles() {
-  articles.value = JSON.parse(
-    localStorage.getItem('articles') || '[]'
-  )
+async function loadArticles() {
+  try {
+    const response = await fetch('./articles.json')
+
+    if (!response.ok) {
+      throw new Error('articles.json олдсонгүй')
+    }
+
+    articles.value = await response.json()
+  } catch (error) {
+    console.error('Нийтлэл уншихад алдаа гарлаа:', error)
+    articles.value = []
+  }
 }
 
 const filteredArticles = computed(() => {
@@ -33,7 +42,6 @@ onMounted(() => {
   loadArticles()
 })
 </script>
-
 
 <template>
 

@@ -8,7 +8,6 @@ const title = ref('')
 const author = ref('')
 const category = ref('Өгүүллэг')
 const content = ref('')
-const background = ref('')
 
 const editor = ref(null)
 
@@ -18,7 +17,7 @@ function updateContent() {
   }
 }
 
-function publishArticle() {
+async function publishArticle() {
   updateContent()
 
   if (!title.value.trim()) {
@@ -31,10 +30,6 @@ function publishArticle() {
     return
   }
 
-  const articles = JSON.parse(
-    localStorage.getItem('articles') || '[]'
-  )
-
   const article = {
     id: Date.now(),
     title: title.value.trim(),
@@ -45,28 +40,32 @@ function publishArticle() {
     date: new Date().toLocaleDateString('mn-MN')
   }
 
-  articles.unshift(article)
+  try {
+    const response = await fetch('/api/articles', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(article)
+    })
 
-  localStorage.setItem(
-    'articles',
-    JSON.stringify(articles)
-  )
+    if (!response.ok) {
+      throw new Error('Нийтлэл хадгалахад алдаа гарлаа')
+    }
 
-  alert('Нийтлэл амжилттай нийтлэгдлээ! 🎉')
+    alert('Нийтлэл амжилттай нийтлэгдлээ! 🎉')
 
-  router.push('/admin')
+    router.push('/admin')
+  } catch (error) {
+    console.error(error)
+    alert('Нийтлэл хадгалахад алдаа гарлаа!')
+  }
 }
 </script>
 
-
 <template>
-
   <div class="page">
-
-    <!-- SIDEBAR -->
-
     <aside class="sidebar">
-
       <h2>Уншлагын танхим</h2>
 
       <router-link to="/admin">
@@ -76,16 +75,10 @@ function publishArticle() {
       <router-link to="/admin/new">
         ✏️ Шинэ нийтлэл
       </router-link>
-
     </aside>
 
-
-    <!-- MAIN -->
-
     <main class="content">
-
       <div class="topbar">
-
         <h1>Шинэ нийтлэл</h1>
 
         <button
@@ -94,11 +87,7 @@ function publishArticle() {
         >
           Publish
         </button>
-
       </div>
-
-
-      <!-- TITLE -->
 
       <input
         v-model="title"
@@ -107,11 +96,7 @@ function publishArticle() {
         placeholder="Гарчиг оруулах"
       />
 
-
-      <!-- EDITOR -->
-
       <div class="editor">
-
         <div
           ref="editor"
           class="mongol-editor"
@@ -119,20 +104,12 @@ function publishArticle() {
           data-placeholder="Монгол бичгийн текстээ энд оруулна уу..."
           @input="updateContent"
         ></div>
-
       </div>
 
-
-      <!-- SETTINGS -->
-
       <div class="settings">
-
         <h3>Нийтлэлийн мэдээлэл</h3>
 
-
-        <label>
-          Зохиогч
-        </label>
+        <label>Зохиогч</label>
 
         <input
           v-model="author"
@@ -140,233 +117,137 @@ function publishArticle() {
           placeholder="Зохиогчийн нэр"
         />
 
-
-        <label>
-          Ангилал
-        </label>
+        <label>Ангилал</label>
 
         <select v-model="category">
-
           <option>Өгүүллэг</option>
           <option>Шүлэг</option>
           <option>Үлгэр</option>
-
         </select>
-
       </div>
-
     </main>
-
   </div>
-
 </template>
 
-
 <style scoped>
-
 @font-face {
   font-family: MongolianScript;
   src: url('/fonts/MongolianScript.ttf');
 }
 
-
 * {
   box-sizing: border-box;
 }
 
-
 .page {
   min-height: 100vh;
-
   display: flex;
-
   background: #f5f5f5;
 }
 
-
-/* SIDEBAR */
-
 .sidebar {
   width: 230px;
-
   background: #202124;
-
   color: white;
-
   padding: 25px 15px;
 }
 
-
 .sidebar h2 {
   font-size: 18px;
-
   margin-bottom: 30px;
 }
 
-
 .sidebar a {
   display: block;
-
   color: white;
-
   text-decoration: none;
-
   padding: 12px;
-
   border-radius: 6px;
-
   margin-bottom: 5px;
 }
-
 
 .sidebar a:hover {
   background: #333;
 }
 
-
-/* CONTENT */
-
 .content {
   flex: 1;
-
   max-width: 1100px;
-
   margin: auto;
-
   padding: 30px;
 }
 
-
-/* TOP */
-
 .topbar {
   display: flex;
-
   justify-content: space-between;
-
   align-items: center;
-
   margin-bottom: 25px;
 }
 
-
 .publish {
   background: #2271b1;
-
   color: white;
-
   border: 0;
-
   border-radius: 5px;
-
   padding: 11px 22px;
-
   font-size: 15px;
-
   cursor: pointer;
 }
 
-
-/* TITLE */
-
 .title {
   width: 100%;
-
   padding: 18px;
-
   border: 1px solid #ccc;
-
   border-radius: 5px;
-
   font-size: 28px;
-
   margin-bottom: 15px;
 }
 
-
-/* EDITOR */
-
 .editor {
   background: white;
-
   border: 1px solid #ccc;
-
   border-radius: 5px;
-
   padding: 15px;
 }
 
-
 .mongol-editor {
-
   writing-mode: vertical-lr;
-
   text-orientation: mixed;
-
   font-family: MongolianScript, serif;
-
   font-size: 30px;
-
   line-height: 1.7;
-
   height: 500px;
-
   overflow-x: auto;
-
   overflow-y: hidden;
-
   white-space: pre-wrap;
-
   outline: none;
-
   padding: 20px;
-
 }
-
 
 .mongol-editor:empty::before {
   content: attr(data-placeholder);
-
   opacity: .4;
 }
 
-
-/* SETTINGS */
-
 .settings {
-
   background: white;
-
   margin-top: 20px;
-
   padding: 20px;
-
   border: 1px solid #ddd;
-
   border-radius: 5px;
 }
 
-
 .settings label {
-
   display: block;
-
   margin-top: 15px;
-
   margin-bottom: 5px;
 }
 
-
 .settings input,
 .settings select {
-
   width: 100%;
-
   padding: 12px;
-
   border: 1px solid #ccc;
-
   border-radius: 5px;
 }
-
 </style>

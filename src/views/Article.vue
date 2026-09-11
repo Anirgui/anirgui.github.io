@@ -10,20 +10,34 @@ const article = ref(null)
 // Background зураг
 const backgroundImage = ref('')
 
-onMounted(() => {
-  const articles = JSON.parse(
-    localStorage.getItem('articles') || '[]'
-  )
+async function loadArticle() {
+  try {
+    const response = await fetch('./articles.json')
 
-  const id = Number(route.params.id)
+    if (!response.ok) {
+      throw new Error('articles.json олдсонгүй')
+    }
 
-  article.value = articles.find(
-    item => item.id === id
-  )
+    const articles = await response.json()
+
+    const id = Number(route.params.id)
+
+    article.value = articles.find(
+      item => item.id === id
+    )
+
+  } catch (error) {
+    console.error('Нийтлэл уншихад алдаа гарлаа:', error)
+    article.value = null
+  }
 
   // Admin-аас сонгосон background зургийг унших
   backgroundImage.value =
     localStorage.getItem('readerBackground') || ''
+}
+
+onMounted(() => {
+  loadArticle()
 })
 
 function goBack() {
