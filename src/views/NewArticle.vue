@@ -101,6 +101,7 @@ async function publishArticle() {
           ref="editor"
           class="mongol-editor"
           contenteditable="true"
+          spellcheck="false"
           data-placeholder="Монгол бичгийн текстээ энд оруулна уу..."
           @input="updateContent"
         ></div>

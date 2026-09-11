@@ -334,6 +334,7 @@ onMounted(() => {
         ref="editor"
         class="mongol-editor"
         contenteditable="true"
+        spellcheck="false"
         data-placeholder="Монгол бичгийн текстээ энд оруулна уу..."
         @input="updateContent"
       ></div>
@@ -496,7 +497,7 @@ onMounted(() => {
     vertical-lr;
 
   direction:
-    rtl;
+    ltr;
 
   text-orientation:
     mixed;
