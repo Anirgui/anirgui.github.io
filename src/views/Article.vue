@@ -31,9 +31,9 @@ async function loadArticle() {
     article.value = null
   }
 
-  // Admin-аас сонгосон background зургийг унших
+  // GitHub Pages дээрх background зургийг унших
   backgroundImage.value =
-    localStorage.getItem('readerBackground') || ''
+    `${import.meta.env.BASE_URL}images/background.jpg`
 }
 
 onMounted(() => {
@@ -148,6 +148,10 @@ body {
   background: #f5f1e8;
 }
 
+
+/* =========================
+   READER
+========================= */
 
 .reader {
   min-height: 100vh;
