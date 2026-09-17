@@ -12,7 +12,7 @@ const backgroundImage = ref('')
 
 async function loadArticle() {
   try {
-    const response = await fetch('./articles.json')
+    const response = await fetch('https://anirgui-github-io.vercel.app/api/articles')
 
     if (!response.ok) {
       throw new Error('articles.json олдсонгүй')
