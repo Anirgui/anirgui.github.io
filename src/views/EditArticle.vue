@@ -25,7 +25,9 @@ const content = ref('')
 const editor = ref(null)
 
 
+// =========================
 // Нийтлэл унших
+// =========================
 
 async function loadArticle() {
 
@@ -40,7 +42,7 @@ async function loadArticle() {
     if (!response.ok) {
 
       throw new Error(
-        'articles.json олдсонгүй'
+        'Нийтлэлүүдийг уншихад алдаа гарлаа'
       )
 
     }
@@ -53,7 +55,7 @@ async function loadArticle() {
     const article =
       data.articles.find(
         item =>
-          item.id ===
+          Number(item.id) ===
           Number(route.params.id)
       )
 
@@ -74,10 +76,10 @@ async function loadArticle() {
       article.title
 
     author.value =
-      article.author
+      article.author || ''
 
     category.value =
-      article.category
+      article.category || ''
 
     content.value =
       article.content
@@ -109,7 +111,9 @@ async function loadArticle() {
 }
 
 
+// =========================
 // Editor-ийн текст авах
+// =========================
 
 function updateContent() {
 
@@ -123,7 +127,9 @@ function updateContent() {
 }
 
 
+// =========================
 // Нийтлэл хадгалах
+// =========================
 
 async function saveArticle() {
 
@@ -144,6 +150,26 @@ async function saveArticle() {
 
     alert(
       'Монгол бичгийн текстээ оруулна уу!'
+    )
+
+    return
+  }
+
+
+  const token =
+    localStorage.getItem(
+      'adminToken'
+    )
+
+
+  if (!token) {
+
+    alert(
+      'Нэвтрэх шаардлагатай!'
+    )
+
+    router.push(
+      '/admin/login'
     )
 
     return
@@ -175,13 +201,16 @@ async function saveArticle() {
 
     const response =
       await fetch(
-        '/api/articles',
+        'https://anirgui-github-io.vercel.app/api/articles',
         {
           method: 'PUT',
 
           headers: {
             'Content-Type':
-              'application/json'
+              'application/json',
+
+            'Authorization':
+              `Bearer ${token}`
           },
 
           body:
@@ -190,9 +219,14 @@ async function saveArticle() {
       )
 
 
+    const data =
+      await response.json()
+
+
     if (!response.ok) {
 
       throw new Error(
+        data.error ||
         'Нийтлэл хадгалахад алдаа гарлаа'
       )
 
@@ -200,7 +234,7 @@ async function saveArticle() {
 
 
     alert(
-      'Нийтлэл хадгалагдлаа'
+      'Нийтлэл хадгалагдлаа! 🎉'
     )
 
 
@@ -214,7 +248,7 @@ async function saveArticle() {
     console.error(error)
 
     alert(
-      'Нийтлэл хадгалахад алдаа гарлаа!'
+      error.message
     )
 
   }
@@ -222,7 +256,9 @@ async function saveArticle() {
 }
 
 
+// =========================
 // Болих
+// =========================
 
 function cancel() {
 
