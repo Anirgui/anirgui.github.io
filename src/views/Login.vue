@@ -4,15 +4,45 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
+const username = ref('')
 const password = ref('')
 const error = ref('')
+const loading = ref(false)
 
-function login() {
-  if (password.value === 'admin123') {
+async function login() {
+  error.value = ''
+  loading.value = true
+
+  try {
+    const response = await fetch(
+      'https://anirgui-github-io.vercel.app/api/login',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          username: username.value,
+          password: password.value
+        })
+      }
+    )
+
+    const data = await response.json()
+
+    if (!response.ok) {
+      error.value = data.error || 'Нэвтрэхэд алдаа гарлаа'
+      return
+    }
+
+    localStorage.setItem('adminToken', data.token)
     localStorage.setItem('adminLoggedIn', 'true')
+
     router.push('/admin')
-  } else {
-    error.value = 'Нууц үг буруу байна'
+  } catch (err) {
+    error.value = 'Backend-тэй холбогдож чадсангүй'
+  } finally {
+    loading.value = false
   }
 }
 </script>
@@ -26,13 +56,22 @@ function login() {
 
       <form @submit.prevent="login">
         <input
+          v-model="username"
+          type="text"
+          placeholder="Username"
+        />
+
+        <input
           v-model="password"
           type="password"
           placeholder="Нууц үг"
         />
 
-        <button type="submit">
-          Нэвтрэх
+        <button
+          type="submit"
+          :disabled="loading"
+        >
+          {{ loading ? 'Нэвтэрч байна...' : 'Нэвтрэх' }}
         </button>
       </form>
 
@@ -73,7 +112,7 @@ input {
   width: 100%;
   box-sizing: border-box;
   padding: 13px;
-  margin: 15px 0;
+  margin: 8px 0;
   border: 1px solid #ddd;
   border-radius: 6px;
   font-size: 16px;
@@ -82,11 +121,16 @@ input {
 button {
   width: 100%;
   padding: 13px;
+  margin-top: 10px;
   border: none;
   border-radius: 6px;
   background: #222;
   color: white;
   font-size: 16px;
+}
+
+button:disabled {
+  opacity: 0.6;
 }
 
 .error {
