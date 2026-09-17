@@ -1,6 +1,28 @@
 import crypto from 'crypto'
 
 export default function handler(req, res) {
+  // CORS
+  res.setHeader(
+    'Access-Control-Allow-Origin',
+    'https://anirgui.github.io'
+  )
+
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'POST, OPTIONS'
+  )
+
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'Content-Type'
+  )
+
+  // Browser-ийн CORS preflight хүсэлт
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end()
+  }
+
+  // Зөвхөн POST
   if (req.method !== 'POST') {
     return res.status(405).json({
       error: 'Method not allowed'
