@@ -18,7 +18,7 @@ const fileInput = ref(null)
 
 
 // =========================
-// Нийтлэлүүдийг унших
+// Нийтлэлүүдийг API-гаас унших
 // =========================
 
 async function loadArticles() {
@@ -27,17 +27,20 @@ async function loadArticles() {
 
     const response =
       await fetch(
-        './articles.json'
+        'https://anirgui-github-io.vercel.app/api/articles'
       )
 
     if (!response.ok) {
       throw new Error(
-        'articles.json олдсонгүй'
+        'Нийтлэлүүдийг уншихад алдаа гарлаа'
       )
     }
 
-    articles.value =
+    const data =
       await response.json()
+
+    articles.value =
+      data.articles || []
 
   } catch (error) {
 
@@ -223,7 +226,7 @@ async function removeBackground() {
     console.error(error)
 
     alert(
-      'Зураг устгахад алдаа гарлаа!'
+      'Background зураг устгахад алдаа гарлаа!'
     )
 
   }
@@ -248,15 +251,33 @@ async function deleteArticle(id) {
 
   try {
 
+    const token =
+      localStorage.getItem(
+        'adminToken'
+      )
+
+    if (!token) {
+
+      alert(
+        'Нэвтрэх шаардлагатай!'
+      )
+
+      return
+    }
+
+
     const response =
       await fetch(
-        '/api/articles',
+        'https://anirgui-github-io.vercel.app/api/articles',
         {
           method: 'DELETE',
 
           headers: {
             'Content-Type':
-              'application/json'
+              'application/json',
+
+            'Authorization':
+              `Bearer ${token}`
           },
 
           body: JSON.stringify({
@@ -266,9 +287,14 @@ async function deleteArticle(id) {
       )
 
 
+    const data =
+      await response.json()
+
+
     if (!response.ok) {
 
       throw new Error(
+        data.error ||
         'Нийтлэл устгахад алдаа гарлаа'
       )
 
@@ -287,7 +313,7 @@ async function deleteArticle(id) {
     console.error(error)
 
     alert(
-      'Нийтлэл устгахад алдаа гарлаа!'
+      error.message
     )
 
   }
@@ -303,6 +329,10 @@ function logout() {
 
   localStorage.removeItem(
     'adminLoggedIn'
+  )
+
+  localStorage.removeItem(
+    'adminToken'
   )
 
   router.push(
