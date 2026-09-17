@@ -40,25 +40,40 @@ async function publishArticle() {
     date: new Date().toLocaleDateString('mn-MN')
   }
 
+  const token = localStorage.getItem('adminToken')
+
+  if (!token) {
+    alert('Нэвтрэх шаардлагатай!')
+    return
+  }
+
   try {
-    const response = await fetch('/api/articles', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(article)
-    })
+    const response = await fetch(
+      'https://anirgui-github-io.vercel.app/api/articles',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(article)
+      }
+    )
+
+    const data = await response.json()
 
     if (!response.ok) {
-      throw new Error('Нийтлэл хадгалахад алдаа гарлаа')
+      throw new Error(
+        data.error || 'Нийтлэл хадгалахад алдаа гарлаа'
+      )
     }
 
-    alert('Нийтлэл амжилттай нийтлэгдлээ! 🎉')
+    alert('Нийтлэл backend рүү амжилттай илгээгдлээ! 🎉')
 
     router.push('/admin')
   } catch (error) {
     console.error(error)
-    alert('Нийтлэл хадгалахад алдаа гарлаа!')
+    alert(error.message)
   }
 }
 </script>
