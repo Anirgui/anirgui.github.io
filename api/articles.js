@@ -1,4 +1,6 @@
 import crypto from 'crypto'
+import fs from 'fs'
+import path from 'path'
 
 function verifyToken(token) {
   if (!token) return null
@@ -33,6 +35,7 @@ function verifyToken(token) {
 }
 
 export default function handler(req, res) {
+  // Token шалгах
   const auth = req.headers.authorization
 
   if (!auth || !auth.startsWith('Bearer ')) {
@@ -52,9 +55,26 @@ export default function handler(req, res) {
     })
   }
 
-  return res.status(200).json({
-    success: true,
-    message: 'Token зөв байна',
-    user
-  })
+  // articles.json унших
+  try {
+    const filePath = path.join(
+      process.cwd(),
+      'public',
+      'articles.json'
+    )
+
+    const articles = JSON.parse(
+      fs.readFileSync(filePath, 'utf-8')
+    )
+
+    return res.status(200).json({
+      success: true,
+      articles
+    })
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: 'Articles уншихад алдаа гарлаа'
+    })
+  }
 }
