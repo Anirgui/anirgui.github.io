@@ -1,6 +1,7 @@
 import crypto from 'crypto'
-import fs from 'fs'
-import path from 'path'
+import { neon } from '@neondatabase/serverless'
+
+const sql = neon(process.env.DATABASE_URL)
 
 function verifyToken(token) {
   if (!token) return null
@@ -37,7 +38,7 @@ function verifyToken(token) {
   }
 }
 
-export default function handler(req, res) {
+export default async function handler(req, res) {
   // Token шалгах
   const auth = req.headers.authorization
 
@@ -58,43 +59,68 @@ export default function handler(req, res) {
     })
   }
 
-  // POST хүсэлт
+  // POST — шинэ нийтлэл хадгалах
   if (req.method === 'POST') {
-    return res.status(200).json({
-      success: true,
-      message: 'POST backend-д ирлээ',
-      article: req.body
-    })
+    try {
+      const {
+        id,
+        title,
+        author,
+        category,
+        content,
+        status,
+        date
+      } = req.body
+
+      const rows = await sql`
+        INSERT INTO articles
+        (id, title, author, category, content, status, date)
+        VALUES
+        (${id}, ${title}, ${author}, ${category}, ${content}, ${status}, ${date})
+        RETURNING *
+      `
+
+      return res.status(201).json({
+        success: true,
+        message: 'Нийтлэл Neon database-д хадгалагдлаа',
+        article: rows[0]
+      })
+    } catch (error) {
+      console.error(error)
+
+      return res.status(500).json({
+        success: false,
+        error: 'Нийтлэл database-д хадгалахад алдаа гарлаа'
+      })
+    }
   }
 
-  // GET-ээс өөр method байвал
-  if (req.method !== 'GET') {
-    return res.status(405).json({
-      success: false,
-      error: 'Method not allowed'
-    })
+  // GET — нийтлэлүүдийг Neon-оос унших
+  if (req.method === 'GET') {
+    try {
+      const articles = await sql`
+        SELECT *
+        FROM articles
+        ORDER BY id DESC
+      `
+
+      return res.status(200).json({
+        success: true,
+        articles
+      })
+    } catch (error) {
+      console.error(error)
+
+      return res.status(500).json({
+        success: false,
+        error: 'Articles database-оос уншихад алдаа гарлаа'
+      })
+    }
   }
 
-  // articles.json унших
-  try {
-    const filePath = path.join(
-      process.cwd(),
-      'public',
-      'articles.json'
-    )
-
-    const articles = JSON.parse(
-      fs.readFileSync(filePath, 'utf-8')
-    )
-
-    return res.status(200).json({
-      success: true,
-      articles
-    })
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: 'Articles уншихад алдаа гарлаа'
-    })
-  }
+  // Бусад method
+  return res.status(405).json({
+    success: false,
+    error: 'Method not allowed'
+  })
 }
