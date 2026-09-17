@@ -33,7 +33,7 @@ async function loadArticle() {
 
     const response =
       await fetch(
-        './articles.json'
+        'https://anirgui-github-io.vercel.app/api/articles'
       )
 
 
@@ -46,12 +46,12 @@ async function loadArticle() {
     }
 
 
-    const articles =
+    const data =
       await response.json()
 
 
     const article =
-      articles.find(
+      data.articles.find(
         item =>
           item.id ===
           Number(route.params.id)
