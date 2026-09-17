@@ -9,15 +9,29 @@ const categories = ['Бүгд', 'Өгүүллэг', 'Шүлэг', 'Үлгэр']
 
 async function loadArticles() {
   try {
-    const response = await fetch('./articles.json')
+    const response = await fetch(
+      'https://anirgui-github-io.vercel.app/api/articles',
+      {
+        method: 'GET'
+      }
+    )
+
+    const data = await response.json()
 
     if (!response.ok) {
-      throw new Error('articles.json олдсонгүй')
+      throw new Error(
+        data.error || 'Нийтлэлүүдийг уншихад алдаа гарлаа'
+      )
     }
 
-    articles.value = await response.json()
+    articles.value = data.articles
+
   } catch (error) {
-    console.error('Нийтлэл уншихад алдаа гарлаа:', error)
+    console.error(
+      'Нийтлэл уншихад алдаа гарлаа:',
+      error
+    )
+
     articles.value = []
   }
 }
