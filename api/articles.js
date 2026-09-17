@@ -39,28 +39,71 @@ function verifyToken(token) {
 }
 
 export default async function handler(req, res) {
-  // Token шалгах
-  const auth = req.headers.authorization
+  // CORS
+  res.setHeader(
+    'Access-Control-Allow-Origin',
+    'https://anirgui.github.io'
+  )
 
-  if (!auth || !auth.startsWith('Bearer ')) {
-    return res.status(401).json({
-      success: false,
-      error: 'Token шаардлагатай'
-    })
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'GET, POST, OPTIONS'
+  )
+
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'Content-Type, Authorization'
+  )
+
+  // Browser-ийн CORS preflight хүсэлт
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end()
   }
 
-  const token = auth.substring(7)
-  const user = verifyToken(token)
+  // GET — нийтлэлүүдийг public уншина
+  if (req.method === 'GET') {
+    try {
+      const articles = await sql`
+        SELECT *
+        FROM articles
+        ORDER BY id DESC
+      `
 
-  if (!user) {
-    return res.status(401).json({
-      success: false,
-      error: 'Token буруу эсвэл хугацаа дууссан'
-    })
+      return res.status(200).json({
+        success: true,
+        articles
+      })
+    } catch (error) {
+      console.error(error)
+
+      return res.status(500).json({
+        success: false,
+        error: 'Articles database-оос уншихад алдаа гарлаа'
+      })
+    }
   }
 
-  // POST — шинэ нийтлэл хадгалах
+  // POST — зөвхөн нэвтэрсэн admin нийтлэл оруулна
   if (req.method === 'POST') {
+    const auth = req.headers.authorization
+
+    if (!auth || !auth.startsWith('Bearer ')) {
+      return res.status(401).json({
+        success: false,
+        error: 'Token шаардлагатай'
+      })
+    }
+
+    const token = auth.substring(7)
+    const user = verifyToken(token)
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        error: 'Token буруу эсвэл хугацаа дууссан'
+      })
+    }
+
     try {
       const {
         id,
@@ -95,30 +138,6 @@ export default async function handler(req, res) {
     }
   }
 
-  // GET — нийтлэлүүдийг Neon-оос унших
-  if (req.method === 'GET') {
-    try {
-      const articles = await sql`
-        SELECT *
-        FROM articles
-        ORDER BY id DESC
-      `
-
-      return res.status(200).json({
-        success: true,
-        articles
-      })
-    } catch (error) {
-      console.error(error)
-
-      return res.status(500).json({
-        success: false,
-        error: 'Articles database-оос уншихад алдаа гарлаа'
-      })
-    }
-  }
-
-  // Бусад method
   return res.status(405).json({
     success: false,
     error: 'Method not allowed'
