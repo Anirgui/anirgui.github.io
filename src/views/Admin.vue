@@ -16,6 +16,9 @@ const backgroundImage = ref('')
 
 const fileInput = ref(null)
 
+const BACKGROUND_API =
+  'https://anirgui-github-io.vercel.app/api/background'
+
 
 // =========================
 // Нийтлэлүүдийг API-гаас унших
@@ -63,12 +66,14 @@ async function loadArticles() {
 function loadBackground() {
 
   backgroundImage.value =
-    './images/background.jpg'
+    BACKGROUND_API
 
 }
 
 
+// =========================
 // Зураг сонгох
+// =========================
 
 function chooseBackground() {
 
@@ -77,7 +82,9 @@ function chooseBackground() {
 }
 
 
-// Зураг сервер рүү илгээх
+// =========================
+// Background зураг upload
+// =========================
 
 async function handleBackgroundUpload(
   event
@@ -107,71 +114,52 @@ async function handleBackgroundUpload(
 
   try {
 
-    const reader =
-      new FileReader()
+    const response =
+      await fetch(
+        BACKGROUND_API,
+        {
+          method: 'POST',
 
+          headers: {
+            'Content-Type':
+              file.type
+          },
 
-    reader.onload = async () => {
-
-      try {
-
-        const response =
-          await fetch(
-            '/api/background',
-            {
-              method: 'POST',
-
-              headers: {
-                'Content-Type':
-                  'application/json'
-              },
-
-              body: JSON.stringify({
-                image:
-                  reader.result
-              })
-            }
-          )
-
-
-        if (!response.ok) {
-
-          throw new Error(
-            'Зураг хадгалахад алдаа гарлаа'
-          )
-
+          body: file
         }
+      )
 
 
-        backgroundImage.value =
-          './images/background.jpg'
+    const data =
+      await response.json()
 
 
-        alert(
-          'Background зураг хадгалагдлаа! 🎉'
-        )
+    if (!response.ok) {
 
-      } catch (error) {
-
-        console.error(error)
-
-        alert(
-          'Зураг хадгалахад алдаа гарлаа!'
-        )
-
-      }
+      throw new Error(
+        data.error ||
+        'Зураг хадгалахад алдаа гарлаа'
+      )
 
     }
 
 
-    reader.readAsDataURL(file)
+    backgroundImage.value =
+      `${BACKGROUND_API}?t=${Date.now()}`
+
+
+    alert(
+      'Background зураг хадгалагдлаа! 🎉'
+    )
+
 
   } catch (error) {
 
     console.error(error)
 
     alert(
-      'Зураг уншихад алдаа гарлаа!'
+      error.message ||
+      'Зураг хадгалахад алдаа гарлаа!'
     )
 
   }
@@ -198,16 +186,21 @@ async function removeBackground() {
 
     const response =
       await fetch(
-        '/api/background',
+        BACKGROUND_API,
         {
           method: 'DELETE'
         }
       )
 
 
+    const data =
+      await response.json()
+
+
     if (!response.ok) {
 
       throw new Error(
+        data.error ||
         'Зураг устгахад алдаа гарлаа'
       )
 
@@ -221,11 +214,13 @@ async function removeBackground() {
       'Background зураг устгагдлаа.'
     )
 
+
   } catch (error) {
 
     console.error(error)
 
     alert(
+      error.message ||
       'Background зураг устгахад алдаа гарлаа!'
     )
 
@@ -255,6 +250,7 @@ async function deleteArticle(id) {
       localStorage.getItem(
         'adminToken'
       )
+
 
     if (!token) {
 
@@ -307,6 +303,7 @@ async function deleteArticle(id) {
     alert(
       'Нийтлэл устгагдлаа.'
     )
+
 
   } catch (error) {
 
