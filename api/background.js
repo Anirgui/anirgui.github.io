@@ -1,9 +1,14 @@
 import crypto from 'crypto'
+
 import {
   put,
   get,
   del
 } from '@vercel/blob'
+
+import {
+  Readable
+} from 'stream'
 
 
 const BLOB_PATH =
@@ -20,21 +25,17 @@ function verifyToken(token) {
     return false
   }
 
-
   const parts =
     token.split('.')
-
 
   if (parts.length !== 2) {
     return false
   }
 
-
   const [
     data,
     signature
   ] = parts
-
 
   const expectedSignature =
     crypto
@@ -45,14 +46,12 @@ function verifyToken(token) {
       .update(data)
       .digest('base64url')
 
-
   if (
     signature !==
     expectedSignature
   ) {
     return false
   }
-
 
   try {
 
@@ -66,14 +65,12 @@ function verifyToken(token) {
           .toString()
       )
 
-
     if (
       payload.exp <
       Date.now()
     ) {
       return false
     }
-
 
     return true
 
@@ -82,7 +79,6 @@ function verifyToken(token) {
     return false
 
   }
-
 }
 
 
@@ -98,12 +94,9 @@ function authenticate(
   const auth =
     req.headers.authorization
 
-
   if (
     !auth ||
-    !auth.startsWith(
-      'Bearer '
-    )
+    !auth.startsWith('Bearer ')
   ) {
 
     res.status(401).json({
@@ -112,13 +105,10 @@ function authenticate(
     })
 
     return false
-
   }
-
 
   const token =
     auth.substring(7)
-
 
   if (
     !verifyToken(token)
@@ -131,12 +121,9 @@ function authenticate(
     })
 
     return false
-
   }
 
-
   return true
-
 }
 
 
@@ -182,7 +169,6 @@ export default async function handler(
       return res
         .status(200)
         .end()
-
     }
 
 
@@ -212,22 +198,23 @@ export default async function handler(
             error:
               'Background зураг олдсонгүй'
           })
-
       }
+
+
+      const contentType =
+        result.blob.contentType ||
+        'image/jpeg'
 
 
       res.setHeader(
         'Content-Type',
-        result.blob.contentType ||
-        'image/jpeg'
+        contentType
       )
-
 
       res.setHeader(
         'Cache-Control',
         'private, no-cache'
       )
-
 
       res.setHeader(
         'X-Content-Type-Options',
@@ -235,8 +222,18 @@ export default async function handler(
       )
 
 
-      return result.stream.pipe(res)
+      // Web ReadableStream
+      // → Node.js ReadableStream
 
+      const nodeStream =
+        Readable.fromWeb(
+          result.stream
+        )
+
+
+      nodeStream.pipe(res)
+
+      return
     }
 
 
@@ -248,8 +245,6 @@ export default async function handler(
       req.method === 'POST'
     ) {
 
-      // Admin token шалгах
-
       if (
         !authenticate(
           req,
@@ -259,8 +254,6 @@ export default async function handler(
         return
       }
 
-
-      // Image шалгах
 
       const contentType =
         req.headers[
@@ -282,11 +275,8 @@ export default async function handler(
             error:
               'Зөвхөн зураг upload хийнэ үү'
           })
-
       }
 
-
-      // Binary data унших
 
       const chunks = []
 
@@ -317,11 +307,8 @@ export default async function handler(
             error:
               'Зураг хоосон байна'
           })
-
       }
 
-
-      // Blob-д хадгалах
 
       const blob =
         await put(
@@ -346,7 +333,6 @@ export default async function handler(
             'Background зураг хадгалагдлаа',
           url: blob.url
         })
-
     }
 
 
@@ -358,8 +344,6 @@ export default async function handler(
       req.method === 'DELETE'
     ) {
 
-      // Admin token шалгах
-
       if (
         !authenticate(
           req,
@@ -369,8 +353,6 @@ export default async function handler(
         return
       }
 
-
-      // Blob устгах
 
       await del(
         BLOB_PATH
@@ -384,7 +366,6 @@ export default async function handler(
           message:
             'Background зураг устгагдлаа'
         })
-
     }
 
 
@@ -416,7 +397,6 @@ export default async function handler(
         error:
           'Background зураг боловсруулахад алдаа гарлаа'
       })
-
   }
 
 }
