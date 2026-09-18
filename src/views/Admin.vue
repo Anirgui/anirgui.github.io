@@ -99,9 +99,7 @@ async function handleBackgroundUpload(
 
 
   if (
-    !file.type.startsWith(
-      'image/'
-    )
+    !file.type.startsWith('image/')
   ) {
 
     alert(
@@ -114,6 +112,22 @@ async function handleBackgroundUpload(
 
   try {
 
+    const token =
+      localStorage.getItem(
+        'adminToken'
+      )
+
+
+    if (!token) {
+
+      alert(
+        'Admin token олдсонгүй. Дахин login хийнэ үү.'
+      )
+
+      return
+    }
+
+
     const response =
       await fetch(
         BACKGROUND_API,
@@ -122,7 +136,10 @@ async function handleBackgroundUpload(
 
           headers: {
             'Content-Type':
-              file.type
+              file.type,
+
+            'Authorization':
+              `Bearer ${token}`
           },
 
           body: file
@@ -184,11 +201,32 @@ async function removeBackground() {
 
   try {
 
+    const token =
+      localStorage.getItem(
+        'adminToken'
+      )
+
+
+    if (!token) {
+
+      alert(
+        'Admin token олдсонгүй. Дахин login хийнэ үү.'
+      )
+
+      return
+    }
+
+
     const response =
       await fetch(
         BACKGROUND_API,
         {
-          method: 'DELETE'
+          method: 'DELETE',
+
+          headers: {
+            'Authorization':
+              `Bearer ${token}`
+          }
         }
       )
 
