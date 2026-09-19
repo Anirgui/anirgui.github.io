@@ -170,7 +170,7 @@ function goBack() {
         >
 
             <h1>
-                Нийтлэл олдсонгүй
+                уншиж байна...
             </h1>
 
 
@@ -180,7 +180,7 @@ function goBack() {
 
 
             <router-link to="/">
-                Нүүр хуудас руу буцах
+                
             </router-link>
 
         </main>
