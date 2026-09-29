@@ -9,6 +9,8 @@ const author = ref('')
 const category = ref('Өгүүллэг')
 const content = ref('')
 
+const selectedFont = ref('MongolianScript')
+
 const editor = ref(null)
 
 function updateContent() {
@@ -36,6 +38,7 @@ async function publishArticle() {
     author: author.value.trim() || 'Тодорхойгүй',
     category: category.value,
     content: content.value,
+    font: selectedFont.value,
     status: 'published',
     date: new Date().toLocaleDateString('mn-MN')
   }
@@ -118,12 +121,29 @@ async function publishArticle() {
           contenteditable="true"
           spellcheck="false"
           data-placeholder="Монгол бичгийн текстээ энд оруулна уу..."
+          :style="{ fontFamily: selectedFont + ', serif' }"
           @input="updateContent"
         ></div>
       </div>
 
       <div class="settings">
         <h3>Нийтлэлийн мэдээлэл</h3>
+
+        <label>Фонт</label>
+
+        <select v-model="selectedFont">
+          <option value="MongolianScript">
+            Mongolian Script
+          </option>
+
+          <option value="MonBaiti">
+            MonBaiti
+          </option>
+
+          <option value="MGQ8102">
+            MGQ8102
+          </option>
+        </select>
 
         <label>Зохиогч</label>
 
@@ -149,6 +169,16 @@ async function publishArticle() {
 @font-face {
   font-family: MongolianScript;
   src: url('/fonts/MongolianScript.ttf');
+}
+
+@font-face {
+  font-family: MonBaiti;
+  src: url('/fonts/monbaiti.ttf');
+}
+
+@font-face {
+  font-family: MGQ8102;
+  src: url('/fonts/MGQ8102.ttf');
 }
 
 * {
@@ -229,7 +259,6 @@ async function publishArticle() {
 .mongol-editor {
   writing-mode: vertical-lr;
   text-orientation: mixed;
-  font-family: MongolianScript, serif;
   font-size: 30px;
   line-height: 1.7;
   height: 500px;

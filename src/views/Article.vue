@@ -150,6 +150,7 @@ function goBack() {
             <div
                 class="mongol-reader"
                 :style="{
+                    fontFamily: `${article.font || 'MongolianScript'}, serif`,
                     backgroundImage:
                         backgroundImage
                         ? `url(${backgroundImage})`
@@ -195,8 +196,19 @@ function goBack() {
 
 @font-face {
     font-family: MongolianScript;
-
     src: url('/fonts/MongolianScript.ttf');
+}
+
+
+@font-face {
+    font-family: MonBaiti;
+    src: url('/fonts/monbaiti.ttf');
+}
+
+
+@font-face {
+    font-family: MGQ8102;
+    src: url('/fonts/MGQ8102.ttf');
 }
 
 
@@ -309,8 +321,6 @@ body {
 .mongol-reader {
 
     writing-mode: vertical-lr;
-
-    font-family: MongolianScript, serif;
 
     font-size: 18px;
 
