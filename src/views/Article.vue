@@ -1,4 +1,5 @@
 <script setup>
+
 import {
     ref,
     onMounted
@@ -150,7 +151,9 @@ function goBack() {
             <div
                 class="mongol-reader"
                 :style="{
-                    fontFamily: `${article.font || 'MongolianScript'}, serif`,
+                    fontFamily:
+                        `${article.font || 'MongolianScript'}, serif`,
+
                     backgroundImage:
                         backgroundImage
                         ? `url(${backgroundImage})`
@@ -186,7 +189,6 @@ function goBack() {
 
         </main>
 
-
     </div>
 
 </template>
@@ -195,20 +197,35 @@ function goBack() {
 <style>
 
 @font-face {
-    font-family: MongolianScript;
-    src: url('/fonts/MongolianScript.ttf');
+
+    font-family:
+        Chimee;
+
+    src:
+        url('/fonts/Chimee.ttf');
+
 }
 
 
 @font-face {
-    font-family: MonBaiti;
-    src: url('/fonts/monbaiti.ttf');
+
+    font-family:
+        MonBaiti;
+
+    src:
+        url('/fonts/monbaiti.ttf');
+
 }
 
 
 @font-face {
-    font-family: MGQ8102;
-    src: url('/fonts/MGQ8102.ttf');
+
+    font-family:
+        MongolianScript;
+
+    src:
+        url('/fonts/MongolianScript.ttf');
+
 }
 
 
@@ -220,7 +237,8 @@ function goBack() {
 body {
     margin: 0;
 
-    background: #f5f1e8;
+    background:
+        #f5f1e8;
 }
 
 
@@ -229,9 +247,12 @@ body {
 ========================= */
 
 .reader {
-    min-height: 100vh;
 
-    color: #222;
+    min-height:
+        100vh;
+
+    color:
+        #222;
 }
 
 
@@ -240,39 +261,56 @@ body {
 ========================= */
 
 .topbar {
-    height: 60px;
 
-    display: flex;
+    height:
+        60px;
 
-    align-items: center;
+    display:
+        flex;
 
-    justify-content: space-between;
+    align-items:
+        center;
 
-    padding: 0 25px;
+    justify-content:
+        space-between;
 
-    background: white;
+    padding:
+        0 25px;
 
-    border-bottom: 1px solid #ddd;
+    background:
+        white;
+
+    border-bottom:
+        1px solid #ddd;
 }
 
 
 .topbar button {
-    border: none;
 
-    background: none;
+    border:
+        none;
 
-    font-size: 16px;
+    background:
+        none;
 
-    cursor: pointer;
+    font-size:
+        16px;
+
+    cursor:
+        pointer;
 }
 
 
 .topbar a {
-    text-decoration: none;
 
-    color: #222;
+    text-decoration:
+        none;
 
-    font-weight: bold;
+    color:
+        #222;
+
+    font-weight:
+        bold;
 }
 
 
@@ -281,36 +319,51 @@ body {
 ========================= */
 
 .article {
-    max-width: 1100px;
 
-    margin: 40px auto;
+    max-width:
+        1100px;
 
-    padding: 0 25px;
+    margin:
+        40px auto;
+
+    padding:
+        0 25px;
 }
 
 
 .meta {
-    display: flex;
 
-    gap: 15px;
+    display:
+        flex;
 
-    color: #777;
+    gap:
+        15px;
 
-    font-size: 14px;
+    color:
+        #777;
+
+    font-size:
+        14px;
 }
 
 
 .article h1 {
-    margin: 15px 0 5px;
 
-    font-size: 32px;
+    margin:
+        15px 0 5px;
+
+    font-size:
+        32px;
 }
 
 
 .author {
-    color: #666;
 
-    margin-bottom: 30px;
+    color:
+        #666;
+
+    margin-bottom:
+        30px;
 }
 
 
@@ -320,55 +373,73 @@ body {
 
 .mongol-reader {
 
-    writing-mode: vertical-lr;
+    writing-mode:
+        vertical-lr;
 
-    font-size: 18px;
+    font-size:
+        18px;
 
-    line-height: 1.7;
+    line-height:
+        1.7;
 
 
     /* 9:16 цонх */
 
-    width: min(100%, 360px);
+    width:
+        min(100%, 360px);
 
-    aspect-ratio: 9 / 16;
+    aspect-ratio:
+        9 / 16;
 
-    margin: 30px auto;
+    margin:
+        30px auto;
 
 
-    white-space: pre-wrap;
+    white-space:
+        pre-wrap;
 
 
     /* Background */
 
-    background-color: white;
+    background-color:
+        white;
 
-    background-size: cover;
+    background-size:
+        cover;
 
-    background-position: center;
+    background-position:
+        center;
 
-    background-repeat: no-repeat;
+    background-repeat:
+        no-repeat;
 
 
-    border: 1px solid #ddd;
+    border:
+        1px solid #ddd;
 
-    border-radius: 10px;
+    border-radius:
+        10px;
 
 
     /* Дотор зай */
 
-    padding: 20px;
+    padding:
+        20px;
 
 
     /* Swipe */
 
-    overflow-x: auto;
+    overflow-x:
+        auto;
 
-    overflow-y: hidden;
+    overflow-y:
+        hidden;
 
-    touch-action: pan-x pan-y;
+    touch-action:
+        pan-x pan-y;
 
-    -webkit-overflow-scrolling: touch;
+    -webkit-overflow-scrolling:
+        touch;
 
 }
 
@@ -378,16 +449,23 @@ body {
 ========================= */
 
 .not-found {
-    text-align: center;
 
-    padding: 100px 20px;
+    text-align:
+        center;
+
+    padding:
+        100px 20px;
 }
 
 
 .not-found a {
-    display: inline-block;
 
-    margin-top: 20px;
+    display:
+        inline-block;
+
+    margin-top:
+        20px;
+
 }
 
 </style>

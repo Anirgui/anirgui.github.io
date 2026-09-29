@@ -1,73 +1,143 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+
+import {
+  ref,
+  computed,
+  onMounted
+} from 'vue'
+
 
 const articles = ref([])
-const search = ref('')
-const selectedCategory = ref('Бүгд')
 
-const categories = ['Бүгд', 'Өгүүллэг', 'Шүлэг', 'Үлгэр']
+const search = ref('')
+
+const selectedCategory =
+  ref('Бүгд')
+
+
+const categories = [
+  'Бүгд',
+  'Өгүүллэг',
+  'Шүлэг',
+  'Үлгэр'
+]
+
+
+// =========================
+// Нийтлэлүүд унших
+// =========================
 
 async function loadArticles() {
-  try {
-    const response = await fetch(
-      'https://anirgui-github-io.vercel.app/api/articles',
-      {
-        method: 'GET'
-      }
-    )
 
-    const data = await response.json()
+  try {
+
+    const response =
+      await fetch(
+        'https://anirgui-github-io.vercel.app/api/articles',
+        {
+          method: 'GET'
+        }
+      )
+
+
+    const data =
+      await response.json()
+
 
     if (!response.ok) {
+
       throw new Error(
-        data.error || 'Нийтлэлүүдийг уншихад алдаа гарлаа'
+        data.error ||
+        'Нийтлэлүүдийг уншихад алдаа гарлаа'
       )
+
     }
 
-    articles.value = data.articles
+
+    articles.value =
+      data.articles
 
   } catch (error) {
+
     console.error(
       'Нийтлэл уншихад алдаа гарлаа:',
       error
     )
 
     articles.value = []
+
   }
+
 }
 
-const filteredArticles = computed(() => {
-  return articles.value.filter(article => {
 
-    const categoryMatch =
-      selectedCategory.value === 'Бүгд' ||
-      article.category === selectedCategory.value
+// =========================
+// Шүүлт
+// =========================
 
-    const searchMatch =
-      article.title
-        .toLowerCase()
-        .includes(search.value.toLowerCase())
+const filteredArticles =
+  computed(() => {
 
-    return categoryMatch && searchMatch
+    return articles.value.filter(
+      article => {
+
+        const categoryMatch =
+          selectedCategory.value === 'Бүгд' ||
+          article.category ===
+            selectedCategory.value
+
+
+        const searchMatch =
+          article.title
+            .toLowerCase()
+            .includes(
+              search.value.toLowerCase()
+            )
+
+
+        return (
+          categoryMatch &&
+          searchMatch
+        )
+
+      }
+    )
+
   })
-})
+
+
+// =========================
+// Эхлэх
+// =========================
 
 onMounted(() => {
+
   loadArticles()
+
 })
+
 </script>
+
 
 <template>
 
   <div class="site">
+
 
     <!-- HEADER -->
 
     <header>
 
       <div>
-        <h2>Anirgui Anir</h2>
-        <span>Уншлагын танхим</span>
+
+        <h2>
+          Anirgui Anir
+        </h2>
+
+        <span>
+          Уншлагын танхим
+        </span>
+
       </div>
 
     </header>
@@ -82,7 +152,8 @@ onMounted(() => {
       </h1>
 
       <p>
-        Монгол бичгээр бичигдсэн зохиол бүтээлүүд
+        Монгол бичгээр бичигдсэн
+        зохиол бүтээлүүд
       </p>
 
     </section>
@@ -109,9 +180,12 @@ onMounted(() => {
         v-for="item in categories"
         :key="item"
         :class="{
-          active: selectedCategory === item
+          active:
+            selectedCategory === item
         }"
-        @click="selectedCategory = item"
+        @click="
+          selectedCategory = item
+        "
       >
         {{ item }}
       </button>
@@ -135,13 +209,28 @@ onMounted(() => {
             {{ article.category }}
           </span>
 
-          <h2>
+
+          <!--
+            Нийтлэл бүр өөрийн
+            хадгалсан фонтоор харагдана.
+            Фонтын нэр хэрэглэгчид
+            харагдахгүй.
+          -->
+
+          <h2
+            :style="{
+              fontFamily:
+                `${article.font || 'MongolianScript'}, serif`
+            }"
+          >
             {{ article.title }}
           </h2>
+
 
           <p>
             {{ article.author }}
           </p>
+
 
           <small>
             {{ article.date }}
@@ -163,7 +252,9 @@ onMounted(() => {
       <!-- EMPTY -->
 
       <div
-        v-if="filteredArticles.length === 0"
+        v-if="
+          filteredArticles.length === 0
+        "
         class="empty"
       >
 
@@ -171,9 +262,7 @@ onMounted(() => {
           уншиж байна...
         </h2>
 
-        <p>
-          
-        </p>
+        <p></p>
 
       </div>
 
@@ -186,6 +275,7 @@ onMounted(() => {
       © 2026 Anirgui Anir
     </footer>
 
+
   </div>
 
 </template>
@@ -193,9 +283,28 @@ onMounted(() => {
 
 <style scoped>
 
+@font-face {
+  font-family: Chimee;
+  src: url('/fonts/Chimee.ttf');
+}
+
+
+@font-face {
+  font-family: MonBaiti;
+  src: url('/fonts/monbaiti.ttf');
+}
+
+
+@font-face {
+  font-family: MongolianScript;
+  src: url('/fonts/MongolianScript.ttf');
+}
+
+
 * {
   box-sizing: border-box;
 }
+
 
 .site {
   min-height: 100vh;
@@ -205,73 +314,101 @@ onMounted(() => {
 /* HEADER */
 
 header {
+
   display: flex;
 
-  justify-content: space-between;
+  justify-content:
+    space-between;
 
   align-items: center;
 
-  padding: 20px 30px;
+  padding:
+    20px 30px;
 
-  border-bottom: 1px solid #ddd;
+  border-bottom:
+    1px solid #ddd;
+
 }
+
 
 header h2 {
   margin: 0;
 }
 
+
 header span {
+
   font-size: 13px;
+
   opacity: .6;
+
 }
 
+
 .admin-link {
+
   color: #2271b1;
+
   text-decoration: none;
+
 }
 
 
 /* HERO */
 
 .hero {
+
   text-align: center;
 
-  padding: 60px 20px 40px;
+  padding:
+    60px 20px 40px;
+
 }
 
+
 .hero h1 {
+
   font-size: 42px;
 
   margin-bottom: 10px;
+
 }
 
 
 /* SEARCH */
 
 .search {
+
   max-width: 700px;
 
   margin: auto;
 
-  padding: 0 20px;
+  padding:
+    0 20px;
+
 }
 
+
 .search input {
+
   width: 100%;
 
   padding: 14px;
 
   font-size: 16px;
 
-  border: 1px solid #ccc;
+  border:
+    1px solid #ccc;
 
   border-radius: 8px;
+
 }
 
 
 /* CATEGORY */
 
 .categories {
+
   display: flex;
 
   justify-content: center;
@@ -280,31 +417,42 @@ header span {
 
   flex-wrap: wrap;
 
-  margin: 25px 0;
+  margin:
+    25px 0;
+
 }
 
-.categories button {
-  padding: 9px 17px;
 
-  border: 1px solid #ccc;
+.categories button {
+
+  padding:
+    9px 17px;
+
+  border:
+    1px solid #ccc;
 
   border-radius: 20px;
 
   background: white;
 
   cursor: pointer;
+
 }
 
+
 .categories button.active {
+
   background: #222;
 
   color: white;
+
 }
 
 
 /* ARTICLES */
 
 .articles {
+
   max-width: 1000px;
 
   margin: auto;
@@ -314,14 +462,20 @@ header span {
   display: grid;
 
   grid-template-columns:
-    repeat(auto-fit, minmax(280px, 1fr));
+    repeat(
+      auto-fit,
+      minmax(280px, 1fr)
+    );
 
   gap: 20px;
+
 }
 
 
 .article-card {
-  border: 1px solid #ddd;
+
+  border:
+    1px solid #ddd;
 
   border-radius: 12px;
 
@@ -331,37 +485,50 @@ header span {
 
   flex-direction: column;
 
-  justify-content: space-between;
+  justify-content:
+    space-between;
 
   min-height: 190px;
+
 }
 
 
 .category {
+
   font-size: 13px;
 
   opacity: .6;
+
 }
 
 
 .article-card h2 {
-  margin: 10px 0;
+
+  margin:
+    10px 0;
+
 }
 
 
 .article-card p {
-  margin: 0 0 5px;
+
+  margin:
+    0 0 5px;
+
 }
 
 
 .article-card small {
+
   opacity: .5;
+
 }
 
 
 /* READ */
 
 .read-button {
+
   display: inline-block;
 
   margin-top: 20px;
@@ -371,25 +538,30 @@ header span {
   text-decoration: none;
 
   font-weight: bold;
+
 }
 
 
 /* EMPTY */
 
 .empty {
-  grid-column: 1 / -1;
+
+  grid-column:
+    1 / -1;
 
   text-align: center;
 
   padding: 60px;
 
   opacity: .6;
+
 }
 
 
 /* FOOTER */
 
 footer {
+
   text-align: center;
 
   padding: 50px;
@@ -397,6 +569,7 @@ footer {
   margin-top: 50px;
 
   opacity: .5;
+
 }
 
 </style>

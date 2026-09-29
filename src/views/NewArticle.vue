@@ -1,298 +1,727 @@
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+
+import {
+  ref,
+  nextTick
+} from 'vue'
+
+import {
+  useRouter
+} from 'vue-router'
+
 
 const router = useRouter()
 
+
 const title = ref('')
 const author = ref('')
-const category = ref('Өгүүллэг')
+const category = ref('')
 const content = ref('')
 
-const selectedFont = ref('MongolianScript')
+// =========================
+// Фонт
+// =========================
+
+const selectedFont =
+  ref('MongolianScript')
+
 
 const editor = ref(null)
 
+
+// =========================
+// Editor-ийн текст авах
+// =========================
+
 function updateContent() {
+
   if (editor.value) {
-    content.value = editor.value.innerText
+
+    content.value =
+      editor.value.innerText
+
   }
+
 }
+
+
+// =========================
+// Нийтлэл нийтлэх
+// =========================
 
 async function publishArticle() {
+
   updateContent()
 
+
   if (!title.value.trim()) {
-    alert('Гарчиг оруулна уу!')
-    return
-  }
 
-  if (!content.value.trim()) {
-    alert('Монгол бичгийн текстээ оруулна уу!')
-    return
-  }
-
-  const article = {
-    id: Date.now(),
-    title: title.value.trim(),
-    author: author.value.trim() || 'Тодорхойгүй',
-    category: category.value,
-    content: content.value,
-    font: selectedFont.value,
-    status: 'published',
-    date: new Date().toLocaleDateString('mn-MN')
-  }
-
-  const token = localStorage.getItem('adminToken')
-
-  if (!token) {
-    alert('Нэвтрэх шаардлагатай!')
-    return
-  }
-
-  try {
-    const response = await fetch(
-      'https://anirgui-github-io.vercel.app/api/articles',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(article)
-      }
+    alert(
+      'Гарчиг оруулна уу!'
     )
 
-    const data = await response.json()
+    return
+
+  }
+
+
+  if (!content.value.trim()) {
+
+    alert(
+      'Монгол бичгийн текстээ оруулна уу!'
+    )
+
+    return
+
+  }
+
+
+  const token =
+    localStorage.getItem(
+      'adminToken'
+    )
+
+
+  if (!token) {
+
+    alert(
+      'Нэвтрэх шаардлагатай!'
+    )
+
+    router.push(
+      '/admin/login'
+    )
+
+    return
+
+  }
+
+
+  const article = {
+
+    id:
+      Date.now(),
+
+    title:
+      title.value.trim(),
+
+    author:
+      author.value.trim() ||
+      'Тодорхойгүй',
+
+    category:
+      category.value,
+
+    content:
+      content.value,
+
+    // =========================
+    // Сонгосон фонт
+    // =========================
+
+    font:
+      selectedFont.value,
+
+    status:
+      'published',
+
+    date:
+      new Date()
+        .toLocaleDateString(
+          'mn-MN'
+        )
+
+  }
+
+
+  try {
+
+    const response =
+      await fetch(
+        'https://anirgui-github-io.vercel.app/api/articles',
+        {
+          method: 'POST',
+
+          headers: {
+
+            'Content-Type':
+              'application/json',
+
+            'Authorization':
+              `Bearer ${token}`
+
+          },
+
+          body:
+            JSON.stringify(article)
+
+        }
+      )
+
+
+    const data =
+      await response.json()
+
 
     if (!response.ok) {
+
       throw new Error(
-        data.error || 'Нийтлэл хадгалахад алдаа гарлаа'
+        data.error ||
+        'Нийтлэл нийтлэхэд алдаа гарлаа'
       )
+
     }
 
-    alert('Нийтлэл backend рүү амжилттай илгээгдлээ! 🎉')
 
-    router.push('/admin')
+    alert(
+      'Нийтлэл амжилттай нийтлэгдлээ! 🎉'
+    )
+
+
+    router.push(
+      '/admin'
+    )
+
+
   } catch (error) {
+
     console.error(error)
-    alert(error.message)
+
+    alert(
+      error.message
+    )
+
   }
+
 }
+
+
+// =========================
+// Editor эхлүүлэх
+// =========================
+
+async function initializeEditor() {
+
+  await nextTick()
+
+  if (editor.value) {
+
+    editor.value.innerText =
+      ''
+
+  }
+
+}
+
+
+// =========================
+// Эхлэх
+// =========================
+
+initializeEditor()
+
 </script>
 
+
 <template>
-  <div class="page">
-    <aside class="sidebar">
-      <h2>Уншлагын танхим</h2>
 
-      <router-link to="/admin">
-        📚 Нийтлэлүүд
-      </router-link>
+  <div class="new-page">
 
-      <router-link to="/admin/new">
-        ✏️ Шинэ нийтлэл
-      </router-link>
-    </aside>
 
-    <main class="content">
-      <div class="topbar">
-        <h1>Шинэ нийтлэл</h1>
+    <!-- TOPBAR -->
+
+    <div class="topbar">
+
+      <h1>
+        Шинэ нийтлэл
+      </h1>
+
+
+      <div class="actions">
 
         <button
-          class="publish"
+          class="cancel-button"
+          @click="
+            router.push('/admin')
+          "
+        >
+          Болих
+        </button>
+
+
+        <button
+          class="publish-button"
           @click="publishArticle"
         >
-          Publish
+          Нийтлэх
         </button>
+
       </div>
+
+    </div>
+
+
+    <!-- FORM -->
+
+    <div class="form">
+
+
+      <!-- TITLE -->
 
       <input
         v-model="title"
-        class="title"
+        class="title-input"
         type="text"
-        placeholder="Гарчиг оруулах"
+        placeholder="Гарчиг"
       />
 
-      <div class="editor">
-        <div
-          ref="editor"
-          class="mongol-editor"
-          contenteditable="true"
-          spellcheck="false"
-          data-placeholder="Монгол бичгийн текстээ энд оруулна уу..."
-          :style="{ fontFamily: selectedFont + ', serif' }"
-          @input="updateContent"
-        ></div>
-      </div>
 
-      <div class="settings">
-        <h3>Нийтлэлийн мэдээлэл</h3>
+      <!-- AUTHOR / CATEGORY / FONT -->
 
-        <label>Фонт</label>
+      <div class="row">
 
-        <select v-model="selectedFont">
-          <option value="MongolianScript">
-            Mongolian Script
-          </option>
-
-          <option value="MonBaiti">
-            MonBaiti
-          </option>
-
-          <option value="MGQ8102">
-            MGQ8102
-          </option>
-        </select>
-
-        <label>Зохиогч</label>
 
         <input
           v-model="author"
           type="text"
-          placeholder="Зохиогчийн нэр"
+          placeholder="Зохиогч"
         />
 
-        <label>Ангилал</label>
 
-        <select v-model="category">
-          <option>Өгүүллэг</option>
-          <option>Шүлэг</option>
-          <option>Үлгэр</option>
+        <select
+          v-model="category"
+        >
+
+          <option value="">
+            Ангилал сонгох
+          </option>
+
+
+          <option value="Шүлэг">
+            Шүлэг
+          </option>
+
+
+          <option value="Өгүүллэг">
+            Өгүүллэг
+          </option>
+
+
+          <option value="Зүйр цэцэн үг">
+            Зүйр цэцэн үг
+          </option>
+
+
+          <option value="Бусад">
+            Бусад
+          </option>
+
         </select>
+
+
+        <!-- FONT -->
+
+        <select
+          v-model="selectedFont"
+        >
+
+          <option value="Chimee">
+            Chimee
+          </option>
+
+
+          <option value="MonBaiti">
+            Microsoft
+          </option>
+
+
+          <option value="MongolianScript">
+            Кимо / Болорсофт
+          </option>
+
+        </select>
+
       </div>
-    </main>
+
+
+      <!-- EDITOR -->
+
+      <div
+        ref="editor"
+        class="mongol-editor"
+        contenteditable="true"
+        spellcheck="false"
+        data-placeholder="Монгол бичгийн текстээ энд оруулна уу..."
+        :style="{
+          fontFamily:
+            `${selectedFont}, serif`
+        }"
+        @input="updateContent"
+      ></div>
+
+
+    </div>
+
   </div>
+
 </template>
 
+
 <style scoped>
-@font-face {
-  font-family: MongolianScript;
-  src: url('/fonts/MongolianScript.ttf');
-}
+
+
+/* =========================
+   ФОНТУУД
+========================= */
 
 @font-face {
-  font-family: MonBaiti;
-  src: url('/fonts/monbaiti.ttf');
+
+  font-family:
+    Chimee;
+
+  src:
+    url('/fonts/Chimee.ttf');
+
 }
+
 
 @font-face {
-  font-family: MGQ8102;
-  src: url('/fonts/MGQ8102.ttf');
+
+  font-family:
+    MonBaiti;
+
+  src:
+    url('/fonts/monbaiti.ttf');
+
 }
 
-* {
-  box-sizing: border-box;
+
+@font-face {
+
+  font-family:
+    MongolianScript;
+
+  src:
+    url('/fonts/MongolianScript.ttf');
+
 }
 
-.page {
-  min-height: 100vh;
-  display: flex;
-  background: #f5f5f5;
+
+/* =========================
+   PAGE
+========================= */
+
+.new-page {
+
+  min-height:
+    100vh;
+
+  background:
+    #f5f5f5;
+
+  padding:
+    25px;
+
+  box-sizing:
+    border-box;
+
 }
 
-.sidebar {
-  width: 230px;
-  background: #202124;
-  color: white;
-  padding: 25px 15px;
-}
 
-.sidebar h2 {
-  font-size: 18px;
-  margin-bottom: 30px;
-}
-
-.sidebar a {
-  display: block;
-  color: white;
-  text-decoration: none;
-  padding: 12px;
-  border-radius: 6px;
-  margin-bottom: 5px;
-}
-
-.sidebar a:hover {
-  background: #333;
-}
-
-.content {
-  flex: 1;
-  max-width: 1100px;
-  margin: auto;
-  padding: 30px;
-}
+/* =========================
+   TOPBAR
+========================= */
 
 .topbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 25px;
+
+  max-width:
+    1000px;
+
+  margin:
+    0 auto 20px;
+
+  display:
+    flex;
+
+  justify-content:
+    space-between;
+
+  align-items:
+    center;
+
+  gap:
+    15px;
+
 }
 
-.publish {
-  background: #2271b1;
-  color: white;
-  border: 0;
-  border-radius: 5px;
-  padding: 11px 22px;
-  font-size: 15px;
-  cursor: pointer;
+
+.topbar h1 {
+
+  margin:
+    0;
+
 }
 
-.title {
-  width: 100%;
-  padding: 18px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 28px;
-  margin-bottom: 15px;
+
+.actions {
+
+  display:
+    flex;
+
+  gap:
+    8px;
+
 }
 
-.editor {
-  background: white;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 15px;
+
+.actions button {
+
+  padding:
+    9px 15px;
+
+  border-radius:
+    6px;
+
+  cursor:
+    pointer;
+
+  font-size:
+    14px;
+
 }
+
+
+.cancel-button {
+
+  border:
+    1px solid #ddd;
+
+  background:
+    white;
+
+  color:
+    #333;
+
+}
+
+
+.publish-button {
+
+  border:
+    none;
+
+  background:
+    #222;
+
+  color:
+    white;
+
+}
+
+
+/* =========================
+   FORM
+========================= */
+
+.form {
+
+  max-width:
+    1000px;
+
+  margin:
+    0 auto;
+
+}
+
+
+.title-input {
+
+  width:
+    100%;
+
+  box-sizing:
+    border-box;
+
+  padding:
+    13px;
+
+  margin-bottom:
+    12px;
+
+  border:
+    1px solid #ddd;
+
+  border-radius:
+    7px;
+
+  font-size:
+    20px;
+
+  background:
+    white;
+
+}
+
+
+/* =========================
+   ROW
+========================= */
+
+.row {
+
+  display:
+    flex;
+
+  gap:
+    10px;
+
+  margin-bottom:
+    15px;
+
+}
+
+
+.row input,
+.row select {
+
+  flex:
+    1;
+
+  padding:
+    11px;
+
+  border:
+    1px solid #ddd;
+
+  border-radius:
+    7px;
+
+  background:
+    white;
+
+  font-size:
+    15px;
+
+}
+
+
+/* =========================
+   EDITOR
+========================= */
 
 .mongol-editor {
-  writing-mode: vertical-lr;
-  text-orientation: mixed;
-  font-size: 30px;
-  line-height: 1.7;
-  height: 500px;
-  overflow-x: auto;
-  overflow-y: hidden;
-  white-space: pre-wrap;
-  outline: none;
-  padding: 20px;
+
+  writing-mode:
+    vertical-lr;
+
+  direction:
+    ltr;
+
+  text-orientation:
+    mixed;
+
+
+  font-size:
+    18px;
+
+  line-height:
+    1.7;
+
+
+  min-height:
+    700px;
+
+  width:
+    100%;
+
+
+  white-space:
+    pre-wrap;
+
+
+  text-align:
+    left;
+
+
+  outline:
+    none;
+
+
+  padding:
+    25px;
+
+
+  background:
+    white;
+
+  border:
+    1px solid #ddd;
+
+  border-radius:
+    8px;
+
+
+  overflow-x:
+    auto;
+
+  overflow-y:
+    hidden;
+
+
+  box-sizing:
+    border-box;
+
 }
 
-.mongol-editor:empty::before {
-  content: attr(data-placeholder);
-  opacity: .4;
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 600px) {
+
+  .new-page {
+
+    padding:
+      15px;
+
+  }
+
+
+  .topbar {
+
+    align-items:
+      flex-start;
+
+    flex-direction:
+      column;
+
+  }
+
+
+  .actions {
+
+    width:
+      100%;
+
+  }
+
+
+  .actions button {
+
+    flex:
+      1;
+
+  }
+
+
+  .row {
+
+    flex-direction:
+      column;
+
+  }
+
 }
 
-.settings {
-  background: white;
-  margin-top: 20px;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-}
-
-.settings label {
-  display: block;
-  margin-top: 15px;
-  margin-bottom: 5px;
-}
-
-.settings input,
-.settings select {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
 </style>

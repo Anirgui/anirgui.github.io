@@ -21,6 +21,12 @@ const author = ref('')
 const category = ref('')
 const content = ref('')
 
+// =========================
+// Фонт
+// =========================
+
+const selectedFont = ref('MongolianScript')
+
 
 const editor = ref(null)
 
@@ -83,6 +89,15 @@ async function loadArticle() {
 
     content.value =
       article.content
+
+
+    // =========================
+    // Өмнө хадгалсан фонт
+    // =========================
+
+    selectedFont.value =
+      article.font ||
+      'MongolianScript'
 
 
     await nextTick()
@@ -192,7 +207,14 @@ async function saveArticle() {
       category.value,
 
     content:
-      content.value
+      content.value,
+
+    // =========================
+    // Фонт хадгална
+    // =========================
+
+    font:
+      selectedFont.value
 
   }
 
@@ -363,6 +385,32 @@ onMounted(() => {
 
         </select>
 
+
+        <!-- =========================
+             Фонт сонгох
+        ========================== -->
+
+        <select
+          v-model="selectedFont"
+        >
+
+          <option value="Chimee">
+            Chimee
+          </option>
+
+
+          <option value="MonBaiti">
+            Microsoft
+          </option>
+
+
+          <option value="MongolianScript">
+            Кимо / Болорсофт
+          </option>
+
+        </select>
+
+
       </div>
 
 
@@ -372,6 +420,9 @@ onMounted(() => {
         contenteditable="true"
         spellcheck="false"
         data-placeholder="Монгол бичгийн текстээ энд оруулна уу..."
+        :style="{
+          fontFamily: `${selectedFont}, serif`
+        }"
         @input="updateContent"
       ></div>
 
@@ -384,6 +435,22 @@ onMounted(() => {
 
 
 <style scoped>
+
+@font-face {
+  font-family: Chimee;
+  src: url('/fonts/Chimee.ttf');
+}
+
+@font-face {
+  font-family: MonBaiti;
+  src: url('/fonts/monbaiti.ttf');
+}
+
+@font-face {
+  font-family: MongolianScript;
+  src: url('/fonts/MongolianScript.ttf');
+}
+
 
 .edit-page {
   min-height: 100vh;
@@ -538,10 +605,6 @@ onMounted(() => {
   text-orientation:
     mixed;
 
-
-  font-family:
-    MongolianScript,
-    serif;
 
   font-size:
     18px;
