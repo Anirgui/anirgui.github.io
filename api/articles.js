@@ -68,7 +68,10 @@ function authenticate(req, res) {
 
 export default async function handler(req, res) {
 
+  // =========================
   // CORS
+  // =========================
+
   res.setHeader(
     'Access-Control-Allow-Origin',
     'https://anirgui.github.io'
@@ -84,7 +87,10 @@ export default async function handler(req, res) {
     'Content-Type, Authorization'
   )
 
+  // =========================
   // OPTIONS
+  // =========================
+
   if (req.method === 'OPTIONS') {
     return res.status(200).end()
   }
@@ -150,7 +156,8 @@ export default async function handler(req, res) {
           category,
           content,
           status,
-          date
+          date,
+          font
         } = req.body
 
         const rows = await sql`
@@ -162,7 +169,8 @@ export default async function handler(req, res) {
             category,
             content,
             status,
-            date
+            date,
+            font
           )
           VALUES
           (
@@ -172,7 +180,8 @@ export default async function handler(req, res) {
             ${category},
             ${content},
             ${status},
-            ${date}
+            ${date},
+            ${font}
           )
           RETURNING *
         `
@@ -195,7 +204,8 @@ export default async function handler(req, res) {
           title,
           author,
           category,
-          content
+          content,
+          font
         } = req.body
 
         const rows = await sql`
@@ -204,7 +214,8 @@ export default async function handler(req, res) {
             title = ${title},
             author = ${author},
             category = ${category},
-            content = ${content}
+            content = ${content},
+            font = ${font}
           WHERE id = ${id}
           RETURNING *
         `
