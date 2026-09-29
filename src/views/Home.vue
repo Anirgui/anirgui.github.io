@@ -211,18 +211,12 @@ onMounted(() => {
 
 
           <!--
-            Нийтлэл бүр өөрийн
-            хадгалсан фонтоор харагдана.
-            Фонтын нэр хэрэглэгчид
-            харагдахгүй.
+            Гарчиг нь кирилл бичгээр
+            харагдах тул Монгол бичгийн
+            тусгай фонт ашиглахгүй.
           -->
 
-          <h2
-            :style="{
-              fontFamily:
-                `${article.font || 'MongolianScript'}, serif`
-            }"
-          >
+          <h2>
             {{ article.title }}
           </h2>
 
@@ -283,24 +277,6 @@ onMounted(() => {
 
 <style scoped>
 
-@font-face {
-  font-family: Chimee;
-  src: url('/fonts/Chimee.ttf');
-}
-
-
-@font-face {
-  font-family: MonBaiti;
-  src: url('/fonts/monbaiti.ttf');
-}
-
-
-@font-face {
-  font-family: MongolianScript;
-  src: url('/fonts/MongolianScript.ttf');
-}
-
-
 * {
   box-sizing: border-box;
 }
@@ -338,18 +314,22 @@ header h2 {
 
 header span {
 
-  font-size: 13px;
+  font-size:
+    13px;
 
-  opacity: .6;
+  opacity:
+    .6;
 
 }
 
 
 .admin-link {
 
-  color: #2271b1;
+  color:
+    #2271b1;
 
-  text-decoration: none;
+  text-decoration:
+    none;
 
 }
 
@@ -358,7 +338,8 @@ header span {
 
 .hero {
 
-  text-align: center;
+  text-align:
+    center;
 
   padding:
     60px 20px 40px;
@@ -368,9 +349,11 @@ header span {
 
 .hero h1 {
 
-  font-size: 42px;
+  font-size:
+    42px;
 
-  margin-bottom: 10px;
+  margin-bottom:
+    10px;
 
 }
 
@@ -379,9 +362,11 @@ header span {
 
 .search {
 
-  max-width: 700px;
+  max-width:
+    700px;
 
-  margin: auto;
+  margin:
+    auto;
 
   padding:
     0 20px;
@@ -391,16 +376,20 @@ header span {
 
 .search input {
 
-  width: 100%;
+  width:
+    100%;
 
-  padding: 14px;
+  padding:
+    14px;
 
-  font-size: 16px;
+  font-size:
+    16px;
 
   border:
     1px solid #ccc;
 
-  border-radius: 8px;
+  border-radius:
+    8px;
 
 }
 
@@ -409,13 +398,17 @@ header span {
 
 .categories {
 
-  display: flex;
+  display:
+    flex;
 
-  justify-content: center;
+  justify-content:
+    center;
 
-  gap: 10px;
+  gap:
+    10px;
 
-  flex-wrap: wrap;
+  flex-wrap:
+    wrap;
 
   margin:
     25px 0;
@@ -431,20 +424,25 @@ header span {
   border:
     1px solid #ccc;
 
-  border-radius: 20px;
+  border-radius:
+    20px;
 
-  background: white;
+  background:
+    white;
 
-  cursor: pointer;
+  cursor:
+    pointer;
 
 }
 
 
 .categories button.active {
 
-  background: #222;
+  background:
+    #222;
 
-  color: white;
+  color:
+    white;
 
 }
 
@@ -453,13 +451,17 @@ header span {
 
 .articles {
 
-  max-width: 1000px;
+  max-width:
+    1000px;
 
-  margin: auto;
+  margin:
+    auto;
 
-  padding: 20px;
+  padding:
+    20px;
 
-  display: grid;
+  display:
+    grid;
 
   grid-template-columns:
     repeat(
@@ -467,7 +469,8 @@ header span {
       minmax(280px, 1fr)
     );
 
-  gap: 20px;
+  gap:
+    20px;
 
 }
 
@@ -477,27 +480,34 @@ header span {
   border:
     1px solid #ddd;
 
-  border-radius: 12px;
+  border-radius:
+    12px;
 
-  padding: 25px;
+  padding:
+    25px;
 
-  display: flex;
+  display:
+    flex;
 
-  flex-direction: column;
+  flex-direction:
+    column;
 
   justify-content:
     space-between;
 
-  min-height: 190px;
+  min-height:
+    190px;
 
 }
 
 
 .category {
 
-  font-size: 13px;
+  font-size:
+    13px;
 
-  opacity: .6;
+  opacity:
+    .6;
 
 }
 
@@ -520,7 +530,8 @@ header span {
 
 .article-card small {
 
-  opacity: .5;
+  opacity:
+    .5;
 
 }
 
@@ -529,15 +540,20 @@ header span {
 
 .read-button {
 
-  display: inline-block;
+  display:
+    inline-block;
 
-  margin-top: 20px;
+  margin-top:
+    20px;
 
-  color: #2271b1;
+  color:
+    #2271b1;
 
-  text-decoration: none;
+  text-decoration:
+    none;
 
-  font-weight: bold;
+  font-weight:
+    bold;
 
 }
 
@@ -549,11 +565,14 @@ header span {
   grid-column:
     1 / -1;
 
-  text-align: center;
+  text-align:
+    center;
 
-  padding: 60px;
+  padding:
+    60px;
 
-  opacity: .6;
+  opacity:
+    .6;
 
 }
 
@@ -562,13 +581,17 @@ header span {
 
 footer {
 
-  text-align: center;
+  text-align:
+    center;
 
-  padding: 50px;
+  padding:
+    50px;
 
-  margin-top: 50px;
+  margin-top:
+    50px;
 
-  opacity: .5;
+  opacity:
+    .5;
 
 }
 
