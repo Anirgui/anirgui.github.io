@@ -379,19 +379,13 @@
 
                 Үсгийн хэмжээ
 
-                <select
-                    v-model.number="fontSize"
-                    >
-
-                    <input
-                    v-model.number="fontSize"
-                    type="number"
-                    min="8"
-                    max="100"
-                    step="1"
-                    />
-                    
-            </select>
+                <input
+                v-model.number="fontSize"
+                type="number"
+                min="8"
+                max="100"
+                step="1"
+                />
 
         </label>
 
