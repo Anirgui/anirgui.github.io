@@ -25,6 +25,19 @@ const content = ref('')
 const selectedFont =
   ref('MongolianScript')
 
+// =========================
+// Үсгийн тохиргоо
+// =========================
+
+const fontSize =
+  ref(18)
+
+const fontColor =
+  ref('#222222')
+
+const lineHeight =
+  ref(1.7)
+
 
 const editor = ref(null)
 
@@ -116,11 +129,24 @@ async function publishArticle() {
       content.value,
 
     // =========================
-    // Сонгосон фонт
+    // Фонт
     // =========================
 
     font:
       selectedFont.value,
+
+    // =========================
+    // Үсгийн тохиргоо
+    // =========================
+
+    font_size:
+      fontSize.value,
+
+    font_color:
+      fontColor.value,
+
+    line_height:
+      lineHeight.value,
 
     status:
       'published',
@@ -280,7 +306,6 @@ initializeEditor()
 
       <div class="row">
 
-
         <input
           v-model="author"
           type="text"
@@ -344,19 +369,148 @@ initializeEditor()
       </div>
 
 
+      <!-- TEXT SETTINGS -->
+
+      <div class="text-settings">
+
+        <!-- FONT SIZE -->
+
+        <label>
+
+          Үсгийн хэмжээ
+
+          <select
+            v-model.number="fontSize"
+          >
+
+            <option :value="16">
+              16 px
+            </option>
+
+            <option :value="18">
+              18 px
+            </option>
+
+            <option :value="20">
+              20 px
+            </option>
+
+            <option :value="22">
+              22 px
+            </option>
+
+            <option :value="24">
+              24 px
+            </option>
+
+            <option :value="28">
+              28 px
+            </option>
+
+            <option :value="32">
+              32 px
+            </option>
+
+          </select>
+
+        </label>
+
+
+        <!-- COLOR -->
+
+        <label>
+
+          Өнгө
+
+          <div class="color-control">
+
+            <input
+              v-model="fontColor"
+              type="color"
+            />
+
+            <span>
+              {{ fontColor }}
+            </span>
+
+          </div>
+
+        </label>
+
+
+        <!-- LINE HEIGHT -->
+
+        <label>
+
+          Мөр хоорондын зай
+
+          <select
+            v-model.number="lineHeight"
+          >
+
+            <option :value="1.2">
+              1.2
+            </option>
+
+            <option :value="1.4">
+              1.4
+            </option>
+
+            <option :value="1.5">
+              1.5
+            </option>
+
+            <option :value="1.7">
+              1.7
+            </option>
+
+            <option :value="2">
+              2.0
+            </option>
+
+            <option :value="2.2">
+              2.2
+            </option>
+
+            <option :value="2.5">
+              2.5
+            </option>
+
+          </select>
+
+        </label>
+
+      </div>
+
+
       <!-- EDITOR -->
 
       <div
         ref="editor"
         class="mongol-editor"
+
         contenteditable="true"
+
         spellcheck="false"
+
         data-placeholder="Монгол бичгийн текстээ энд оруулна уу..."
+
         :style="{
           fontFamily:
-            `${selectedFont}, serif`
+            `${selectedFont}, serif`,
+
+          fontSize:
+            `${fontSize}px`,
+
+          color:
+            fontColor,
+
+          lineHeight:
+            lineHeight
         }"
+
         @input="updateContent"
+
       ></div>
 
 
@@ -606,6 +760,124 @@ initializeEditor()
 
 
 /* =========================
+   TEXT SETTINGS
+========================= */
+
+.text-settings {
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  gap:
+    15px;
+
+  margin-bottom:
+    15px;
+
+  padding:
+    12px;
+
+  background:
+    white;
+
+  border:
+    1px solid #ddd;
+
+  border-radius:
+    8px;
+
+}
+
+
+.text-settings label {
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  gap:
+    8px;
+
+  font-size:
+    14px;
+
+  color:
+    #333;
+
+}
+
+
+.text-settings select {
+
+  padding:
+    8px;
+
+  border:
+    1px solid #ddd;
+
+  border-radius:
+    6px;
+
+  background:
+    white;
+
+}
+
+
+.color-control {
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  gap:
+    6px;
+
+}
+
+
+.color-control input {
+
+  width:
+    38px;
+
+  height:
+    32px;
+
+  padding:
+    2px;
+
+  border:
+    1px solid #ddd;
+
+  border-radius:
+    5px;
+
+  background:
+    white;
+
+}
+
+
+.color-control span {
+
+  font-size:
+    13px;
+
+  color:
+    #666;
+
+}
+
+
+/* =========================
    EDITOR
 ========================= */
 
@@ -619,13 +891,6 @@ initializeEditor()
 
   text-orientation:
     mixed;
-
-
-  font-size:
-    18px;
-
-  line-height:
-    1.7;
 
 
   min-height:
@@ -719,6 +984,28 @@ initializeEditor()
 
     flex-direction:
       column;
+
+  }
+
+
+  .text-settings {
+
+    align-items:
+      flex-start;
+
+    flex-direction:
+      column;
+
+  }
+
+
+  .text-settings label {
+
+    width:
+      100%;
+
+    justify-content:
+      space-between;
 
   }
 

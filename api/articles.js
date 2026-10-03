@@ -157,7 +157,10 @@ export default async function handler(req, res) {
           content,
           status,
           date,
-          font
+          font,
+          font_size,
+          font_color,
+          line_height
         } = req.body
 
         const rows = await sql`
@@ -170,7 +173,10 @@ export default async function handler(req, res) {
             content,
             status,
             date,
-            font
+            font,
+            font_size,
+            font_color,
+            line_height
           )
           VALUES
           (
@@ -181,7 +187,10 @@ export default async function handler(req, res) {
             ${content},
             ${status},
             ${date},
-            ${font}
+            ${font},
+            ${font_size},
+            ${font_color},
+            ${line_height}
           )
           RETURNING *
         `
@@ -205,7 +214,10 @@ export default async function handler(req, res) {
           author,
           category,
           content,
-          font
+          font,
+          font_size,
+          font_color,
+          line_height
         } = req.body
 
         const rows = await sql`
@@ -215,7 +227,10 @@ export default async function handler(req, res) {
             author = ${author},
             category = ${category},
             content = ${content},
-            font = ${font}
+            font = ${font},
+            font_size = ${font_size},
+            font_color = ${font_color},
+            line_height = ${line_height}
           WHERE id = ${id}
           RETURNING *
         `
