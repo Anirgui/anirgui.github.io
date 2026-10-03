@@ -27,6 +27,24 @@ const content = ref('')
 
 const selectedFont = ref('MongolianScript')
 
+// =========================
+// Үсгийн хэмжээ
+// =========================
+
+const fontSize = ref(18)
+
+// =========================
+// Үсгийн өнгө
+// =========================
+
+const fontColor = ref('#222222')
+
+// =========================
+// Мөрийн зай
+// =========================
+
+const lineHeight = ref(1.7)
+
 
 const editor = ref(null)
 
@@ -98,6 +116,31 @@ async function loadArticle() {
     selectedFont.value =
       article.font ||
       'MongolianScript'
+
+
+    // =========================
+    // Өмнө хадгалсан хэмжээ
+    // =========================
+
+    fontSize.value =
+      Number(article.font_size) || 18
+
+
+    // =========================
+    // Өмнө хадгалсан өнгө
+    // =========================
+
+    fontColor.value =
+      article.font_color ||
+      '#222222'
+
+
+    // =========================
+    // Өмнө хадгалсан мөрийн зай
+    // =========================
+
+    lineHeight.value =
+      Number(article.line_height) || 1.7
 
 
     await nextTick()
@@ -210,11 +253,32 @@ async function saveArticle() {
       content.value,
 
     // =========================
-    // Фонт хадгална
+    // Фонт
     // =========================
 
     font:
-      selectedFont.value
+      selectedFont.value,
+
+    // =========================
+    // Үсгийн хэмжээ
+    // =========================
+
+    font_size:
+      fontSize.value,
+
+    // =========================
+    // Үсгийн өнгө
+    // =========================
+
+    font_color:
+      fontColor.value,
+
+    // =========================
+    // Мөрийн зай
+    // =========================
+
+    line_height:
+      lineHeight.value
 
   }
 
@@ -387,7 +451,7 @@ onMounted(() => {
 
 
         <!-- =========================
-             Фонт сонгох
+             Фонт
         ========================== -->
 
         <select
@@ -414,6 +478,94 @@ onMounted(() => {
       </div>
 
 
+      <!-- =========================
+           TEXT SETTINGS
+      ========================== -->
+
+      <div class="text-settings">
+
+
+        <!-- FONT SIZE -->
+
+        <label>
+
+          Үсгийн хэмжээ
+
+          <input
+            v-model.number="fontSize"
+            type="number"
+            min="8"
+            max="100"
+            step="1"
+          />
+
+        </label>
+
+
+        <!-- FONT COLOR -->
+
+        <label class="color-control">
+
+          Үсгийн өнгө
+
+          <input
+            v-model="fontColor"
+            type="color"
+          />
+
+        </label>
+
+
+        <!-- LINE HEIGHT -->
+
+        <label>
+
+          Мөрийн зай
+
+          <select
+            v-model.number="lineHeight"
+          >
+
+            <option :value="1.2">
+              1.2
+            </option>
+
+            <option :value="1.4">
+              1.4
+            </option>
+
+            <option :value="1.5">
+              1.5
+            </option>
+
+            <option :value="1.7">
+              1.7
+            </option>
+
+            <option :value="2">
+              2.0
+            </option>
+
+            <option :value="2.2">
+              2.2
+            </option>
+
+            <option :value="2.5">
+              2.5
+            </option>
+
+          </select>
+
+        </label>
+
+
+      </div>
+
+
+      <!-- =========================
+           EDITOR
+      ========================== -->
+
       <div
         ref="editor"
         class="mongol-editor"
@@ -421,7 +573,17 @@ onMounted(() => {
         spellcheck="false"
         data-placeholder="Монгол бичгийн текстээ энд оруулна уу..."
         :style="{
-          fontFamily: `${selectedFont}, serif`
+          fontFamily:
+            `${selectedFont}, serif`,
+
+          fontSize:
+            `${fontSize}px`,
+
+          color:
+            fontColor,
+
+          lineHeight:
+            lineHeight
         }"
         @input="updateContent"
       ></div>
@@ -437,60 +599,101 @@ onMounted(() => {
 <style scoped>
 
 @font-face {
-  font-family: Chimee;
-  src: url('/fonts/Chimee.ttf');
+
+  font-family:
+    Chimee;
+
+  src:
+    url('/fonts/Chimee.ttf');
+
 }
+
 
 @font-face {
-  font-family: MonBaiti;
-  src: url('/fonts/monbaiti.ttf');
+
+  font-family:
+    MonBaiti;
+
+  src:
+    url('/fonts/monbaiti.ttf');
+
 }
+
 
 @font-face {
-  font-family: MongolianScript;
-  src: url('/fonts/MongolianScript.ttf');
+
+  font-family:
+    MongolianScript;
+
+  src:
+    url('/fonts/MongolianScript.ttf');
+
 }
 
+
+/* =========================
+   PAGE
+========================= */
 
 .edit-page {
-  min-height: 100vh;
-  background: #f5f5f5;
 
-  padding: 25px;
+  min-height:
+    100vh;
 
-  box-sizing: border-box;
+  background:
+    #f5f5f5;
+
+  padding:
+    25px;
+
+  box-sizing:
+    border-box;
+
 }
 
+
+/* =========================
+   TOPBAR
+========================= */
 
 .topbar {
 
-  max-width: 1000px;
+  max-width:
+    1000px;
 
   margin:
     0 auto 20px;
 
-  display: flex;
+  display:
+    flex;
 
   justify-content:
     space-between;
 
-  align-items: center;
+  align-items:
+    center;
 
-  gap: 15px;
+  gap:
+    15px;
 
 }
 
 
 .topbar h1 {
-  margin: 0;
+
+  margin:
+    0;
+
 }
 
 
 .actions {
 
-  display: flex;
+  display:
+    flex;
 
-  gap: 8px;
+  gap:
+    8px;
 
 }
 
@@ -500,11 +703,14 @@ onMounted(() => {
   padding:
     9px 15px;
 
-  border-radius: 6px;
+  border-radius:
+    6px;
 
-  cursor: pointer;
+  cursor:
+    pointer;
 
-  font-size: 14px;
+  font-size:
+    14px;
 
 }
 
@@ -514,27 +720,37 @@ onMounted(() => {
   border:
     1px solid #ddd;
 
-  background: white;
+  background:
+    white;
 
-  color: #333;
+  color:
+    #333;
 
 }
 
 
 .save-button {
 
-  border: none;
+  border:
+    none;
 
-  background: #222;
+  background:
+    #222;
 
-  color: white;
+  color:
+    white;
 
 }
 
 
+/* =========================
+   FORM
+========================= */
+
 .form {
 
-  max-width: 1000px;
+  max-width:
+    1000px;
 
   margin:
     0 auto;
@@ -544,33 +760,47 @@ onMounted(() => {
 
 .title-input {
 
-  width: 100%;
+  width:
+    100%;
 
-  box-sizing: border-box;
+  box-sizing:
+    border-box;
 
-  padding: 13px;
+  padding:
+    13px;
 
-  margin-bottom: 12px;
+  margin-bottom:
+    12px;
 
   border:
     1px solid #ddd;
 
-  border-radius: 7px;
+  border-radius:
+    7px;
 
-  font-size: 20px;
+  font-size:
+    20px;
 
-  background: white;
+  background:
+    white;
 
 }
 
 
+/* =========================
+   ROW
+========================= */
+
 .row {
 
-  display: flex;
+  display:
+    flex;
 
-  gap: 10px;
+  gap:
+    10px;
 
-  margin-bottom: 15px;
+  margin-bottom:
+    15px;
 
 }
 
@@ -578,21 +808,109 @@ onMounted(() => {
 .row input,
 .row select {
 
-  flex: 1;
+  flex:
+    1;
 
-  padding: 11px;
+  padding:
+    11px;
 
   border:
     1px solid #ddd;
 
-  border-radius: 7px;
+  border-radius:
+    7px;
 
-  background: white;
+  background:
+    white;
 
-  font-size: 15px;
+  font-size:
+    15px;
 
 }
 
+
+/* =========================
+   TEXT SETTINGS
+========================= */
+
+.text-settings {
+
+  display:
+    flex;
+
+  gap:
+    10px;
+
+  margin-bottom:
+    15px;
+
+}
+
+
+.text-settings label {
+
+  flex:
+    1;
+
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  gap:
+    6px;
+
+  font-size:
+    14px;
+
+  color:
+    #555;
+
+}
+
+
+.text-settings input,
+.text-settings select {
+
+  width:
+    100%;
+
+  padding:
+    10px;
+
+  border:
+    1px solid #ddd;
+
+  border-radius:
+    7px;
+
+  background:
+    white;
+
+  font-size:
+    15px;
+
+  box-sizing:
+    border-box;
+
+}
+
+
+.color-control input {
+
+  height:
+    42px;
+
+  padding:
+    3px;
+
+}
+
+
+/* =========================
+   EDITOR
+========================= */
 
 .mongol-editor {
 
@@ -604,13 +922,6 @@ onMounted(() => {
 
   text-orientation:
     mixed;
-
-
-  font-size:
-    18px;
-
-  line-height:
-    1.7;
 
 
   min-height:
@@ -659,6 +970,10 @@ onMounted(() => {
 }
 
 
+/* =========================
+   MOBILE
+========================= */
+
 @media (max-width: 600px) {
 
   .edit-page {
@@ -697,6 +1012,14 @@ onMounted(() => {
 
 
   .row {
+
+    flex-direction:
+      column;
+
+  }
+
+
+  .text-settings {
 
     flex-direction:
       column;
