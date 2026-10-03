@@ -1,417 +1,397 @@
 <script setup>
 
-import {
-  ref,
-  nextTick
-} from 'vue'
+    import {
+        ref,
+        nextTick
+    } from 'vue'
 
-import {
-  useRouter
-} from 'vue-router'
-
-
-const router = useRouter()
+    import {
+        useRouter
+    } from 'vue-router'
 
 
-const title = ref('')
-const author = ref('')
-const category = ref('')
-const content = ref('')
-
-// =========================
-// Фонт
-// =========================
-
-const selectedFont =
-  ref('MongolianScript')
-
-// =========================
-// Үсгийн тохиргоо
-// =========================
-
-const fontSize =
-  ref(18)
-
-const fontColor =
-  ref('#222222')
-
-const lineHeight =
-  ref(1.7)
+    const router = useRouter()
 
 
-const editor = ref(null)
-
-
-// =========================
-// Editor-ийн текст авах
-// =========================
-
-function updateContent() {
-
-  if (editor.value) {
-
-    content.value =
-      editor.value.innerText
-
-  }
-
-}
-
-
-// =========================
-// Нийтлэл нийтлэх
-// =========================
-
-async function publishArticle() {
-
-  updateContent()
-
-
-  if (!title.value.trim()) {
-
-    alert(
-      'Гарчиг оруулна уу!'
-    )
-
-    return
-
-  }
-
-
-  if (!content.value.trim()) {
-
-    alert(
-      'Монгол бичгийн текстээ оруулна уу!'
-    )
-
-    return
-
-  }
-
-
-  const token =
-    localStorage.getItem(
-      'adminToken'
-    )
-
-
-  if (!token) {
-
-    alert(
-      'Нэвтрэх шаардлагатай!'
-    )
-
-    router.push(
-      '/admin/login'
-    )
-
-    return
-
-  }
-
-
-  const article = {
-
-    id:
-      Date.now(),
-
-    title:
-      title.value.trim(),
-
-    author:
-      author.value.trim() ||
-      'Тодорхойгүй',
-
-    category:
-      category.value,
-
-    content:
-      content.value,
+    const title = ref('')
+    const author = ref('')
+    const category = ref('')
+    const content = ref('')
 
     // =========================
     // Фонт
     // =========================
 
-    font:
-      selectedFont.value,
+    const selectedFont =
+    ref('MongolianScript')
 
     // =========================
     // Үсгийн тохиргоо
     // =========================
 
-    font_size:
-      fontSize.value,
+    const fontSize =
+    ref(18)
 
-    font_color:
-      fontColor.value,
+    const fontColor =
+    ref('#222222')
 
-    line_height:
-      lineHeight.value,
-
-    status:
-      'published',
-
-    date:
-      new Date()
-        .toLocaleDateString(
-          'mn-MN'
-        )
-
-  }
+    const lineHeight =
+    ref(1.7)
 
 
-  try {
+    const editor = ref(null)
 
-    const response =
-      await fetch(
-        'https://anirgui-github-io.vercel.app/api/articles',
-        {
-          method: 'POST',
 
-          headers: {
+    // =========================
+    // Editor-ийн текст авах
+    // =========================
 
-            'Content-Type':
-              'application/json',
+    function updateContent() {
 
-            'Authorization':
-              `Bearer ${token}`
+        if (editor.value) {
 
-          },
-
-          body:
-            JSON.stringify(article)
+            content.value =
+            editor.value.innerText
 
         }
-      )
-
-
-    const data =
-      await response.json()
-
-
-    if (!response.ok) {
-
-      throw new Error(
-        data.error ||
-        'Нийтлэл нийтлэхэд алдаа гарлаа'
-      )
 
     }
 
 
-    alert(
-      'Нийтлэл амжилттай нийтлэгдлээ! 🎉'
-    )
+    // =========================
+    // Нийтлэл нийтлэх
+    // =========================
+
+    async function publishArticle() {
+
+        updateContent()
 
 
-    router.push(
-      '/admin'
-    )
+        if (!title.value.trim()) {
+
+            alert(
+                'Гарчиг оруулна уу!'
+            )
+
+            return
+
+        }
 
 
-  } catch (error) {
+        if (!content.value.trim()) {
 
-    console.error(error)
+            alert(
+                'Монгол бичгийн текстээ оруулна уу!'
+            )
 
-    alert(
-      error.message
-    )
+            return
 
-  }
-
-}
+        }
 
 
-// =========================
-// Editor эхлүүлэх
-// =========================
-
-async function initializeEditor() {
-
-  await nextTick()
-
-  if (editor.value) {
-
-    editor.value.innerText =
-      ''
-
-  }
-
-}
+        const token =
+        localStorage.getItem(
+            'adminToken'
+        )
 
 
-// =========================
-// Эхлэх
-// =========================
+        if (!token) {
 
-initializeEditor()
+            alert(
+                'Нэвтрэх шаардлагатай!'
+            )
+
+            router.push(
+                '/admin/login'
+            )
+
+            return
+
+        }
+
+
+        const article = {
+
+            id:
+            Date.now(),
+
+            title:
+            title.value.trim(),
+
+            author:
+            author.value.trim() ||
+            'Тодорхойгүй',
+
+            category:
+            category.value,
+
+            content:
+            content.value,
+
+            // =========================
+            // Фонт
+            // =========================
+
+            font:
+            selectedFont.value,
+
+            // =========================
+            // Үсгийн тохиргоо
+            // =========================
+
+            font_size:
+            fontSize.value,
+
+            font_color:
+            fontColor.value,
+
+            line_height:
+            lineHeight.value,
+
+            status:
+            'published',
+
+            date:
+            new Date()
+            .toLocaleDateString(
+                'mn-MN'
+            )
+
+        }
+
+
+        try {
+
+            const response =
+            await fetch(
+                'https://anirgui-github-io.vercel.app/api/articles',
+                {
+                    method: 'POST',
+
+                    headers: {
+
+                        'Content-Type':
+                        'application/json',
+
+                        'Authorization':
+                        `Bearer ${token}`
+
+                    },
+
+                    body:
+                    JSON.stringify(article)
+
+                }
+            )
+
+
+            const data =
+            await response.json()
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.error ||
+                    'Нийтлэл нийтлэхэд алдаа гарлаа'
+                )
+
+            }
+
+
+            alert(
+                'Нийтлэл амжилттай нийтлэгдлээ! 🎉'
+            )
+
+
+            router.push(
+                '/admin'
+            )
+
+
+        } catch (error) {
+
+            console.error(error)
+
+            alert(
+                error.message
+            )
+
+        }
+
+    }
+
+
+    // =========================
+    // Editor эхлүүлэх
+    // =========================
+
+    async function initializeEditor() {
+
+        await nextTick()
+
+        if (editor.value) {
+
+            editor.value.innerText =
+            ''
+
+        }
+
+    }
+
+
+    // =========================
+    // Эхлэх
+    // =========================
+
+    initializeEditor()
 
 </script>
 
 
 <template>
 
-  <div class="new-page">
+    <div class="new-page">
 
 
-    <!-- TOPBAR -->
+        <!-- TOPBAR -->
 
-    <div class="topbar">
+        <div class="topbar">
 
-      <h1>
-        Шинэ нийтлэл
-      </h1>
+            <h1>
+                Шинэ нийтлэл
+            </h1>
 
 
-      <div class="actions">
+            <div class="actions">
 
-        <button
-          class="cancel-button"
-          @click="
-            router.push('/admin')
-          "
+                <button
+                    class="cancel-button"
+                    @click="
+                    router.push('/admin')
+                    "
         >
-          Болих
-        </button>
+                    Болих
+                    </button>
 
 
-        <button
-          class="publish-button"
-          @click="publishArticle"
-        >
-          Нийтлэх
-        </button>
+                    <button
+                        class="publish-button"
+                        @click="publishArticle"
+                        >
+                        Нийтлэх
+                    </button>
 
-      </div>
+                </div>
 
-    </div>
-
-
-    <!-- FORM -->
-
-    <div class="form">
+            </div>
 
 
-      <!-- TITLE -->
+            <!-- FORM -->
 
-      <input
-        v-model="title"
-        class="title-input"
-        type="text"
-        placeholder="Гарчиг"
-      />
+            <div class="form">
 
 
-      <!-- AUTHOR / CATEGORY / FONT -->
+                <!-- TITLE -->
 
-      <div class="row">
-
-        <input
-          v-model="author"
-          type="text"
-          placeholder="Зохиогч"
-        />
-
-
-        <select
-          v-model="category"
-        >
-
-          <option value="">
-            Ангилал сонгох
-          </option>
+                <input
+                v-model="title"
+                class="title-input"
+                type="text"
+                placeholder="Гарчиг"
+                />
 
 
-          <option value="Шүлэг">
-            Шүлэг
-          </option>
+            <!-- AUTHOR / CATEGORY / FONT -->
+
+            <div class="row">
+
+                <input
+                v-model="author"
+                type="text"
+                placeholder="Зохиогч"
+                />
 
 
-          <option value="Өгүүллэг">
-            Өгүүллэг
-          </option>
+            <select
+                v-model="category"
+                >
+
+                <option value="">
+                    Ангилал сонгох
+                </option>
 
 
-          <option value="Зүйр цэцэн үг">
-            Зүйр цэцэн үг
-          </option>
+                <option value="Шүлэг">
+                    Шүлэг
+                </option>
 
 
-          <option value="Бусад">
-            Бусад
-          </option>
-
-        </select>
+                <option value="Өгүүллэг">
+                    Өгүүллэг
+                </option>
 
 
-        <!-- FONT -->
-
-        <select
-          v-model="selectedFont"
-        >
-
-          <option value="Chimee">
-            Chimee
-          </option>
+                <option value="Зүйр цэцэн үг">
+                    Зүйр цэцэн үг
+                </option>
 
 
-          <option value="MonBaiti">
-            Microsoft
-          </option>
+                <option value="Бусад">
+                    Бусад
+                </option>
+
+            </select>
 
 
-          <option value="MongolianScript">
-            Кимо / Болорсофт
-          </option>
+            <!-- FONT -->
 
-        </select>
+            <select
+                v-model="selectedFont"
+                >
 
-      </div>
+                <option value="Chimee">
+                    Chimee
+                </option>
 
 
-      <!-- TEXT SETTINGS -->
+                <option value="MonBaiti">
+                    Microsoft
+                </option>
 
-      <div class="text-settings">
 
-        <!-- FONT SIZE -->
+                <option value="MongolianScript">
+                    Кимо / Болорсофт
+                </option>
 
-        <label>
+            </select>
 
-          Үсгийн хэмжээ
+        </div>
 
-          <select
-            v-model.number="fontSize"
-          >
 
-            <option :value="16">
-              16 px
-            </option>
+        <!-- TEXT SETTINGS -->
 
-            <option :value="18">
-              18 px
-            </option>
+        <div class="text-settings">
 
-            <option :value="20">
-              20 px
-            </option>
+            <!-- FONT SIZE -->
 
-            <option :value="22">
-              22 px
-            </option>
+            <label>
 
-            <option :value="24">
-              24 px
-            </option>
+                Үсгийн хэмжээ
 
-            <option :value="28">
-              28 px
-            </option>
+                <select
+                    v-model.number="fontSize"
+                    >
 
-            <option :value="32">
-              32 px
-            </option>
-
-          </select>
+                    <input
+                    v-model.number="fontSize"
+                    type="number"
+                    min="8"
+                    max="100"
+                    step="1"
+                    />
+                    
+            </select>
 
         </label>
 
@@ -420,103 +400,103 @@ initializeEditor()
 
         <label>
 
-          Өнгө
+            Өнгө
 
-          <div class="color-control">
+            <div class="color-control">
 
-            <input
-              v-model="fontColor"
-              type="color"
-            />
+                <input
+                v-model="fontColor"
+                type="color"
+                />
 
             <span>
-              {{ fontColor }}
+                {{ fontColor }}
             </span>
 
-          </div>
+        </div>
 
-        </label>
+    </label>
 
 
-        <!-- LINE HEIGHT -->
+    <!-- LINE HEIGHT -->
 
-        <label>
+    <label>
 
-          Мөр хоорондын зай
+        Мөр хоорондын зай
 
-          <select
+        <select
             v-model.number="lineHeight"
-          >
+            >
 
             <option :value="1.2">
-              1.2
+                1.2
             </option>
 
             <option :value="1.4">
-              1.4
+                1.4
             </option>
 
             <option :value="1.5">
-              1.5
+                1.5
             </option>
 
             <option :value="1.7">
-              1.7
+                1.7
             </option>
 
             <option :value="2">
-              2.0
+                2.0
             </option>
 
             <option :value="2.2">
-              2.2
+                2.2
             </option>
 
             <option :value="2.5">
-              2.5
+                2.5
             </option>
 
-          </select>
+        </select>
 
-        </label>
+    </label>
 
-      </div>
+</div>
 
 
-      <!-- EDITOR -->
+<!-- EDITOR -->
 
-      <div
-        ref="editor"
-        class="mongol-editor"
+<div
+    ref="editor"
+    class="mongol-editor"
 
-        contenteditable="true"
+    contenteditable="true"
 
-        spellcheck="false"
+    spellcheck="false"
 
-        data-placeholder="Монгол бичгийн текстээ энд оруулна уу..."
+    data-placeholder="Монгол бичгийн текстээ энд оруулна уу..."
 
-        :style="{
-          fontFamily:
-            `${selectedFont}, serif`,
+    :style=" {
+        fontFamily:
+        `${selectedFont}, serif`,
 
-          fontSize:
-            `${fontSize}px`,
+        fontSize:
+        `${fontSize}px`,
 
-          color:
-            fontColor,
+        color:
+        fontColor,
 
-          lineHeight:
-            lineHeight
+        lineHeight:
+        lineHeight
         }"
 
         @input="updateContent"
 
-      ></div>
+        ></div>
 
 
-    </div>
+</div>
 
-  </div>
+</div>
 
 </template>
 
@@ -530,33 +510,33 @@ initializeEditor()
 
 @font-face {
 
-  font-family:
-    Chimee;
+font-family:
+Chimee;
 
-  src:
-    url('/fonts/Chimee.ttf');
-
-}
-
-
-@font-face {
-
-  font-family:
-    MonBaiti;
-
-  src:
-    url('/fonts/monbaiti.ttf');
+src:
+url('/fonts/Chimee.ttf');
 
 }
 
 
 @font-face {
 
-  font-family:
-    MongolianScript;
+font-family:
+MonBaiti;
 
-  src:
-    url('/fonts/MongolianScript.ttf');
+src:
+url('/fonts/monbaiti.ttf');
+
+}
+
+
+@font-face {
+
+font-family:
+MongolianScript;
+
+src:
+url('/fonts/MongolianScript.ttf');
 
 }
 
@@ -567,17 +547,17 @@ initializeEditor()
 
 .new-page {
 
-  min-height:
-    100vh;
+min-height:
+100vh;
 
-  background:
-    #f5f5f5;
+background:
+#f5f5f5;
 
-  padding:
-    25px;
+padding:
+25px;
 
-  box-sizing:
-    border-box;
+box-sizing:
+border-box;
 
 }
 
@@ -588,87 +568,87 @@ initializeEditor()
 
 .topbar {
 
-  max-width:
-    1000px;
+max-width:
+1000px;
 
-  margin:
-    0 auto 20px;
+margin:
+0 auto 20px;
 
-  display:
-    flex;
+display:
+flex;
 
-  justify-content:
-    space-between;
+justify-content:
+space-between;
 
-  align-items:
-    center;
+align-items:
+center;
 
-  gap:
-    15px;
+gap:
+15px;
 
 }
 
 
 .topbar h1 {
 
-  margin:
-    0;
+margin:
+0;
 
 }
 
 
 .actions {
 
-  display:
-    flex;
+display:
+flex;
 
-  gap:
-    8px;
+gap:
+8px;
 
 }
 
 
 .actions button {
 
-  padding:
-    9px 15px;
+padding:
+9px 15px;
 
-  border-radius:
-    6px;
+border-radius:
+6px;
 
-  cursor:
-    pointer;
+cursor:
+pointer;
 
-  font-size:
-    14px;
+font-size:
+14px;
 
 }
 
 
 .cancel-button {
 
-  border:
-    1px solid #ddd;
+border:
+1px solid #ddd;
 
-  background:
-    white;
+background:
+white;
 
-  color:
-    #333;
+color:
+#333;
 
 }
 
 
 .publish-button {
 
-  border:
-    none;
+border:
+none;
 
-  background:
-    #222;
+background:
+#222;
 
-  color:
-    white;
+color:
+white;
 
 }
 
@@ -679,40 +659,40 @@ initializeEditor()
 
 .form {
 
-  max-width:
-    1000px;
+max-width:
+1000px;
 
-  margin:
-    0 auto;
+margin:
+0 auto;
 
 }
 
 
 .title-input {
 
-  width:
-    100%;
+width:
+100%;
 
-  box-sizing:
-    border-box;
+box-sizing:
+border-box;
 
-  padding:
-    13px;
+padding:
+13px;
 
-  margin-bottom:
-    12px;
+margin-bottom:
+12px;
 
-  border:
-    1px solid #ddd;
+border:
+1px solid #ddd;
 
-  border-radius:
-    7px;
+border-radius:
+7px;
 
-  font-size:
-    20px;
+font-size:
+20px;
 
-  background:
-    white;
+background:
+white;
 
 }
 
@@ -723,14 +703,14 @@ initializeEditor()
 
 .row {
 
-  display:
-    flex;
+display:
+flex;
 
-  gap:
-    10px;
+gap:
+10px;
 
-  margin-bottom:
-    15px;
+margin-bottom:
+15px;
 
 }
 
@@ -738,23 +718,23 @@ initializeEditor()
 .row input,
 .row select {
 
-  flex:
-    1;
+flex:
+1;
 
-  padding:
-    11px;
+padding:
+11px;
 
-  border:
-    1px solid #ddd;
+border:
+1px solid #ddd;
 
-  border-radius:
-    7px;
+border-radius:
+7px;
 
-  background:
-    white;
+background:
+white;
 
-  font-size:
-    15px;
+font-size:
+15px;
 
 }
 
@@ -765,114 +745,114 @@ initializeEditor()
 
 .text-settings {
 
-  display:
-    flex;
+display:
+flex;
 
-  align-items:
-    center;
+align-items:
+center;
 
-  gap:
-    15px;
+gap:
+15px;
 
-  margin-bottom:
-    15px;
+margin-bottom:
+15px;
 
-  padding:
-    12px;
+padding:
+12px;
 
-  background:
-    white;
+background:
+white;
 
-  border:
-    1px solid #ddd;
+border:
+1px solid #ddd;
 
-  border-radius:
-    8px;
+border-radius:
+8px;
 
 }
 
 
 .text-settings label {
 
-  display:
-    flex;
+display:
+flex;
 
-  align-items:
-    center;
+align-items:
+center;
 
-  gap:
-    8px;
+gap:
+8px;
 
-  font-size:
-    14px;
+font-size:
+14px;
 
-  color:
-    #333;
+color:
+#333;
 
 }
 
 
 .text-settings select {
 
-  padding:
-    8px;
+padding:
+8px;
 
-  border:
-    1px solid #ddd;
+border:
+1px solid #ddd;
 
-  border-radius:
-    6px;
+border-radius:
+6px;
 
-  background:
-    white;
+background:
+white;
 
 }
 
 
 .color-control {
 
-  display:
-    flex;
+display:
+flex;
 
-  align-items:
-    center;
+align-items:
+center;
 
-  gap:
-    6px;
+gap:
+6px;
 
 }
 
 
 .color-control input {
 
-  width:
-    38px;
+width:
+38px;
 
-  height:
-    32px;
+height:
+32px;
 
-  padding:
-    2px;
+padding:
+2px;
 
-  border:
-    1px solid #ddd;
+border:
+1px solid #ddd;
 
-  border-radius:
-    5px;
+border-radius:
+5px;
 
-  background:
-    white;
+background:
+white;
 
 }
 
 
 .color-control span {
 
-  font-size:
-    13px;
+font-size:
+13px;
 
-  color:
-    #666;
+color:
+#666;
 
 }
 
@@ -883,58 +863,58 @@ initializeEditor()
 
 .mongol-editor {
 
-  writing-mode:
-    vertical-lr;
+writing-mode:
+vertical-lr;
 
-  direction:
-    ltr;
+direction:
+ltr;
 
-  text-orientation:
-    mixed;
-
-
-  min-height:
-    700px;
-
-  width:
-    100%;
+text-orientation:
+mixed;
 
 
-  white-space:
-    pre-wrap;
+min-height:
+700px;
+
+width:
+100%;
 
 
-  text-align:
-    left;
+white-space:
+pre-wrap;
 
 
-  outline:
-    none;
+text-align:
+left;
 
 
-  padding:
-    25px;
+outline:
+none;
 
 
-  background:
-    white;
-
-  border:
-    1px solid #ddd;
-
-  border-radius:
-    8px;
+padding:
+25px;
 
 
-  overflow-x:
-    auto;
+background:
+white;
 
-  overflow-y:
-    hidden;
+border:
+1px solid #ddd;
+
+border-radius:
+8px;
 
 
-  box-sizing:
-    border-box;
+overflow-x:
+auto;
+
+overflow-y:
+hidden;
+
+
+box-sizing:
+border-box;
 
 }
 
@@ -945,69 +925,69 @@ initializeEditor()
 
 @media (max-width: 600px) {
 
-  .new-page {
+.new-page {
 
-    padding:
-      15px;
+padding:
+15px;
 
-  }
-
-
-  .topbar {
-
-    align-items:
-      flex-start;
-
-    flex-direction:
-      column;
-
-  }
+}
 
 
-  .actions {
+.topbar {
 
-    width:
-      100%;
+align-items:
+flex-start;
 
-  }
+flex-direction:
+column;
 
-
-  .actions button {
-
-    flex:
-      1;
-
-  }
+}
 
 
-  .row {
+.actions {
 
-    flex-direction:
-      column;
+width:
+100%;
 
-  }
-
-
-  .text-settings {
-
-    align-items:
-      flex-start;
-
-    flex-direction:
-      column;
-
-  }
+}
 
 
-  .text-settings label {
+.actions button {
 
-    width:
-      100%;
+flex:
+1;
 
-    justify-content:
-      space-between;
+}
 
-  }
+
+.row {
+
+flex-direction:
+column;
+
+}
+
+
+.text-settings {
+
+align-items:
+flex-start;
+
+flex-direction:
+column;
+
+}
+
+
+.text-settings label {
+
+width:
+100%;
+
+justify-content:
+space-between;
+
+}
 
 }
 

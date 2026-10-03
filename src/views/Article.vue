@@ -154,6 +154,15 @@ function goBack() {
                     fontFamily:
                         `${article.font || 'MongolianScript'}, serif`,
 
+                    fontSize:
+                        `${article.font_size || 18}px`,
+
+                    color:
+                        article.font_color || '#222222',
+
+                    lineHeight:
+                        article.line_height || 1.7,
+
                     backgroundImage:
                         backgroundImage
                         ? `url(${backgroundImage})`
@@ -179,12 +188,12 @@ function goBack() {
 
 
             <p>
-                
+
             </p>
 
 
             <router-link to="/">
-                
+
             </router-link>
 
         </main>
@@ -375,12 +384,6 @@ body {
 
     writing-mode:
         vertical-lr;
-
-    font-size:
-        18px;
-
-    line-height:
-        1.7;
 
 
     /* 9:16 цонх */
