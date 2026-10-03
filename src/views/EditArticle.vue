@@ -21,32 +21,41 @@ const author = ref('')
 const category = ref('')
 const content = ref('')
 
+
 // =========================
 // Фонт
 // =========================
 
-const selectedFont = ref('MongolianScript')
+const selectedFont =
+  ref('MongolianScript')
+
 
 // =========================
 // Үсгийн хэмжээ
 // =========================
 
-const fontSize = ref(18)
+const fontSize =
+  ref(18)
+
 
 // =========================
 // Үсгийн өнгө
 // =========================
 
-const fontColor = ref('#222222')
+const fontColor =
+  ref('#222222')
+
 
 // =========================
 // Мөрийн зай
 // =========================
 
-const lineHeight = ref(1.7)
+const lineHeight =
+  ref(1.7)
 
 
-const editor = ref(null)
+const editor =
+  ref(null)
 
 
 // =========================
@@ -109,35 +118,19 @@ async function loadArticle() {
       article.content
 
 
-    // =========================
-    // Өмнө хадгалсан фонт
-    // =========================
-
     selectedFont.value =
       article.font ||
       'MongolianScript'
 
 
-    // =========================
-    // Өмнө хадгалсан хэмжээ
-    // =========================
-
     fontSize.value =
       Number(article.font_size) || 18
 
-
-    // =========================
-    // Өмнө хадгалсан өнгө
-    // =========================
 
     fontColor.value =
       article.font_color ||
       '#222222'
 
-
-    // =========================
-    // Өмнө хадгалсан мөрийн зай
-    // =========================
 
     lineHeight.value =
       Number(article.line_height) || 1.7
@@ -170,7 +163,7 @@ async function loadArticle() {
 
 
 // =========================
-// Editor-ийн текст авах
+// Текст өөрчлөгдөх бүрт
 // =========================
 
 function updateContent() {
@@ -186,7 +179,31 @@ function updateContent() {
 
 
 // =========================
-// Нийтлэл хадгалах
+// Буцаах
+// =========================
+
+function undoText() {
+
+  if (!editor.value) {
+    return
+  }
+
+
+  editor.value.focus()
+
+
+  document.execCommand(
+    'undo'
+  )
+
+
+  updateContent()
+
+}
+
+
+// =========================
+// Хадгалах
 // =========================
 
 async function saveArticle() {
@@ -252,30 +269,14 @@ async function saveArticle() {
     content:
       content.value,
 
-    // =========================
-    // Фонт
-    // =========================
-
     font:
       selectedFont.value,
-
-    // =========================
-    // Үсгийн хэмжээ
-    // =========================
 
     font_size:
       fontSize.value,
 
-    // =========================
-    // Үсгийн өнгө
-    // =========================
-
     font_color:
       fontColor.value,
-
-    // =========================
-    // Мөрийн зай
-    // =========================
 
     line_height:
       lineHeight.value
@@ -368,7 +369,6 @@ onMounted(() => {
 
   <div class="edit-page">
 
-
     <div class="topbar">
 
       <h1>
@@ -378,6 +378,18 @@ onMounted(() => {
 
       <div class="actions">
 
+        <!-- Буцаах -->
+
+        <button
+          class="undo-button"
+          @click="undoText"
+        >
+          ↶ Буцаах
+        </button>
+
+
+        <!-- Болих -->
+
         <button
           class="cancel-button"
           @click="cancel"
@@ -385,6 +397,8 @@ onMounted(() => {
           Болих
         </button>
 
+
+        <!-- Хадгалах -->
 
         <button
           class="save-button"
@@ -401,6 +415,8 @@ onMounted(() => {
     <div class="form">
 
 
+      <!-- Гарчиг -->
+
       <input
         v-model="title"
         class="title-input"
@@ -412,12 +428,16 @@ onMounted(() => {
       <div class="row">
 
 
+        <!-- Зохиогч -->
+
         <input
           v-model="author"
           type="text"
           placeholder="Зохиогч"
         />
 
+
+        <!-- Ангилал -->
 
         <select
           v-model="category"
@@ -427,21 +447,17 @@ onMounted(() => {
             Ангилал сонгох
           </option>
 
-
           <option value="Шүлэг">
             Шүлэг
           </option>
-
 
           <option value="Өгүүллэг">
             Өгүүллэг
           </option>
 
-
           <option value="Зүйр цэцэн үг">
             Зүйр цэцэн үг
           </option>
-
 
           <option value="Бусад">
             Бусад
@@ -450,9 +466,7 @@ onMounted(() => {
         </select>
 
 
-        <!-- =========================
-             Фонт
-        ========================== -->
+        <!-- Фонт -->
 
         <select
           v-model="selectedFont"
@@ -462,11 +476,9 @@ onMounted(() => {
             Chimee
           </option>
 
-
           <option value="MonBaiti">
             Microsoft
           </option>
-
 
           <option value="MongolianScript">
             Кимо / Болорсофт
@@ -474,18 +486,15 @@ onMounted(() => {
 
         </select>
 
-
       </div>
 
 
-      <!-- =========================
-           TEXT SETTINGS
-      ========================== -->
+      <!-- Текстийн тохиргоо -->
 
       <div class="text-settings">
 
 
-        <!-- FONT SIZE -->
+        <!-- Үсгийн хэмжээ -->
 
         <label>
 
@@ -502,9 +511,11 @@ onMounted(() => {
         </label>
 
 
-        <!-- FONT COLOR -->
+        <!-- Үсгийн өнгө -->
 
-        <label class="color-control">
+        <label
+          class="color-control"
+        >
 
           Үсгийн өнгө
 
@@ -516,7 +527,7 @@ onMounted(() => {
         </label>
 
 
-        <!-- LINE HEIGHT -->
+        <!-- Мөрийн зай -->
 
         <label>
 
@@ -558,13 +569,10 @@ onMounted(() => {
 
         </label>
 
-
       </div>
 
 
-      <!-- =========================
-           EDITOR
-      ========================== -->
+      <!-- Монгол бичгийн редактор -->
 
       <div
         ref="editor"
@@ -573,6 +581,7 @@ onMounted(() => {
         spellcheck="false"
         data-placeholder="Монгол бичгийн текстээ энд оруулна уу..."
         :style="{
+
           fontFamily:
             `${selectedFont}, serif`,
 
@@ -584,6 +593,7 @@ onMounted(() => {
 
           lineHeight:
             lineHeight
+
         }"
         @input="updateContent"
       ></div>
@@ -597,6 +607,7 @@ onMounted(() => {
 
 
 <style scoped>
+
 
 @font-face {
 
@@ -631,10 +642,6 @@ onMounted(() => {
 }
 
 
-/* =========================
-   PAGE
-========================= */
-
 .edit-page {
 
   min-height:
@@ -651,10 +658,6 @@ onMounted(() => {
 
 }
 
-
-/* =========================
-   TOPBAR
-========================= */
 
 .topbar {
 
@@ -715,6 +718,28 @@ onMounted(() => {
 }
 
 
+/* =========================
+   Буцаах
+   ========================= */
+
+.undo-button {
+
+  border:
+    1px solid #ddd;
+
+  background:
+    white;
+
+  color:
+    #333;
+
+}
+
+
+/* =========================
+   Болих
+   ========================= */
+
 .cancel-button {
 
   border:
@@ -729,6 +754,10 @@ onMounted(() => {
 }
 
 
+/* =========================
+   Хадгалах
+   ========================= */
+
 .save-button {
 
   border:
@@ -742,10 +771,6 @@ onMounted(() => {
 
 }
 
-
-/* =========================
-   FORM
-========================= */
 
 .form {
 
@@ -787,10 +812,6 @@ onMounted(() => {
 }
 
 
-/* =========================
-   ROW
-========================= */
-
 .row {
 
   display:
@@ -828,10 +849,6 @@ onMounted(() => {
 
 }
 
-
-/* =========================
-   TEXT SETTINGS
-========================= */
 
 .text-settings {
 
@@ -908,10 +925,6 @@ onMounted(() => {
 }
 
 
-/* =========================
-   EDITOR
-========================= */
-
 .mongol-editor {
 
   writing-mode:
@@ -923,29 +936,23 @@ onMounted(() => {
   text-orientation:
     mixed;
 
-
   min-height:
     700px;
 
   width:
     100%;
 
-
   white-space:
     pre-wrap;
-
 
   text-align:
     left;
 
-
   outline:
     none;
 
-
   padding:
     25px;
-
 
   background:
     white;
@@ -956,23 +963,17 @@ onMounted(() => {
   border-radius:
     8px;
 
-
   overflow-x:
     auto;
 
   overflow-y:
     hidden;
 
-
   box-sizing:
     border-box;
 
 }
 
-
-/* =========================
-   MOBILE
-========================= */
 
 @media (max-width: 600px) {
 
@@ -1029,3 +1030,7 @@ onMounted(() => {
 }
 
 </style>
+
+Энд ↶ Буцаах нь зөвхөн редактор дотор хийсэн бичилт/устгалын үйлдлийг буцаана. Neon database-д аль хэдийн хадгалсан нийтлэлийг буцаахгүй.
+
+Хэрэв энэ товч Android Chrome дээр ажиллахгүй байвал дараагийн алхамд "document.execCommand('undo')"-оос хамаарахгүй, өөрийн undo history хийж өгч болно.
