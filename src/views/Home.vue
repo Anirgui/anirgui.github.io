@@ -33,10 +33,7 @@ async function loadArticles() {
 
     const response =
       await fetch(
-        'https://anirgui-github-io.vercel.app/api/articles',
-        {
-          method: 'GET'
-        }
+        '/articles.json'
       )
 
 
@@ -47,7 +44,6 @@ async function loadArticles() {
     if (!response.ok) {
 
       throw new Error(
-        data.error ||
         'Нийтлэлүүдийг уншихад алдаа гарлаа'
       )
 
@@ -55,7 +51,7 @@ async function loadArticles() {
 
 
     articles.value =
-      data.articles
+      data
 
   } catch (error) {
 
@@ -116,166 +112,152 @@ onMounted(() => {
 
 })
 
-</script>
+</script><template>  <div class="site"><!-- HEADER -->
 
+<header>
 
-<template>
+  <div>
 
-  <div class="site">
+    <h2>
+      Anirgui Anir
+    </h2>
 
-
-    <!-- HEADER -->
-
-    <header>
-
-      <div>
-
-        <h2>
-          Anirgui Anir
-        </h2>
-
-        <span>
-          Уншлагын танхим
-        </span>
-
-      </div>
-
-    </header>
-
-
-    <!-- HERO -->
-
-    <section class="hero">
-
-      <h1>
-        Уншлагын танхим
-      </h1>
-
-      <p>
-        Монгол бичгээр бичигдсэн
-        зохиол бүтээлүүд
-      </p>
-
-    </section>
-
-
-    <!-- SEARCH -->
-
-    <div class="search">
-
-      <input
-        v-model="search"
-        type="text"
-        placeholder="🔍 Нийтлэл хайх..."
-      />
-
-    </div>
-
-
-    <!-- CATEGORY -->
-
-    <div class="categories">
-
-      <button
-        v-for="item in categories"
-        :key="item"
-        :class="{
-          active:
-            selectedCategory === item
-        }"
-        @click="
-          selectedCategory = item
-        "
-      >
-        {{ item }}
-      </button>
-
-    </div>
-
-
-    <!-- ARTICLES -->
-
-    <main class="articles">
-
-      <article
-        v-for="article in filteredArticles"
-        :key="article.id"
-        class="article-card"
-      >
-
-        <div class="article-info">
-
-          <span class="category">
-            {{ article.category }}
-          </span>
-
-
-          <!--
-            Гарчиг нь кирилл бичгээр
-            харагдах тул Монгол бичгийн
-            тусгай фонт ашиглахгүй.
-          -->
-
-          <h2>
-            {{ article.title }}
-          </h2>
-
-
-          <p>
-            {{ article.author }}
-          </p>
-
-
-          <small>
-            {{ article.date }}
-          </small>
-
-        </div>
-
-
-        <router-link
-          :to="`/article/${article.id}`"
-          class="read-button"
-        >
-          Унших →
-        </router-link>
-
-      </article>
-
-
-      <!-- EMPTY -->
-
-      <div
-        v-if="
-          filteredArticles.length === 0
-        "
-        class="empty"
-      >
-
-        <h2>
-          уншиж байна...
-        </h2>
-
-        <p></p>
-
-      </div>
-
-    </main>
-
-
-    <!-- FOOTER -->
-
-    <footer>
-      © 2026 Anirgui Anir
-    </footer>
-
+    <span>
+      Уншлагын танхим
+    </span>
 
   </div>
 
-</template>
+</header>
 
 
-<style scoped>
+<!-- HERO -->
+
+<section class="hero">
+
+  <h1>
+    Уншлагын танхим
+  </h1>
+
+  <p>
+    Монгол бичгээр бичигдсэн
+    зохиол бүтээлүүд
+  </p>
+
+</section>
+
+
+<!-- SEARCH -->
+
+<div class="search">
+
+  <input
+    v-model="search"
+    type="text"
+    placeholder="🔍 Нийтлэл хайх..."
+  />
+
+</div>
+
+
+<!-- CATEGORY -->
+
+<div class="categories">
+
+  <button
+    v-for="item in categories"
+    :key="item"
+    :class="{
+      active:
+        selectedCategory === item
+    }"
+    @click="
+      selectedCategory = item
+    "
+  >
+    {{ item }}
+  </button>
+
+</div>
+
+
+<!-- ARTICLES -->
+
+<main class="articles">
+
+  <article
+    v-for="article in filteredArticles"
+    :key="article.id"
+    class="article-card"
+  >
+
+    <div class="article-info">
+
+      <span class="category">
+        {{ article.category }}
+      </span>
+
+
+      <!--
+        Гарчиг нь кирилл бичгээр
+        харагдах тул Монгол бичгийн
+        тусгай фонт ашиглахгүй.
+      -->
+
+      <h2>
+        {{ article.title }}
+      </h2>
+
+
+      <p>
+        {{ article.author }}
+      </p>
+
+
+      <small>
+        {{ article.date }}
+      </small>
+
+    </div>
+
+
+    <router-link
+      :to="`/article/${article.id}`"
+      class="read-button"
+    >
+      Унших →
+    </router-link>
+
+  </article>
+
+
+  <!-- EMPTY -->
+
+  <div
+    v-if="
+      filteredArticles.length === 0
+    "
+    class="empty"
+  >
+
+    <h2>
+      уншиж байна...
+    </h2>
+
+    <p></p>
+
+  </div>
+
+</main>
+
+
+<!-- FOOTER -->
+
+<footer>
+  © 2026 Anirgui Anir
+</footer>
+
+  </div></template><style scoped>
 
 * {
   box-sizing: border-box;

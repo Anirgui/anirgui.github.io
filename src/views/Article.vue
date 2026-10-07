@@ -32,7 +32,7 @@ async function loadArticle() {
 
         const response =
             await fetch(
-                'https://anirgui-github-io.vercel.app/api/articles'
+                '/articles.json'
             )
 
 
@@ -54,7 +54,7 @@ async function loadArticle() {
 
 
         article.value =
-            data.articles.find(
+            data.find(
                 item =>
                     Number(item.id) === id
             )
@@ -93,117 +93,109 @@ function goBack() {
 
 }
 
-</script>
+</script><template><div class="reader">
 
 
-<template>
+    <header class="topbar">
 
-    <div class="reader">
-
-
-        <header class="topbar">
-
-            <button
-                @click="goBack"
-            >
-                ← Буцах
-            </button>
+        <button
+            @click="goBack"
+        >
+            ← Буцах
+        </button>
 
 
-            <router-link to="/">
-                Уншлагын танхим
-            </router-link>
+        <router-link to="/">
+            Уншлагын танхим
+        </router-link>
 
-        </header>
+    </header>
 
 
-        <main
-            v-if="article"
-            class="article"
+    <main
+        v-if="article"
+        class="article"
+    >
+
+        <div class="meta">
+
+            <span>
+                {{ article.category }}
+            </span>
+
+
+            <span>
+                {{ article.date }}
+            </span>
+
+        </div>
+
+
+        <h1>
+            {{ article.title }}
+        </h1>
+
+
+        <p class="author">
+            {{ article.author }}
+        </p>
+
+
+        <!-- Монгол бичгийн уншигч -->
+
+        <div
+            class="mongol-reader"
+            :style="{
+                fontFamily:
+                    `${article.font || 'MongolianScript'}, serif`,
+
+                fontSize:
+                    `${article.font_size || 18}px`,
+
+                color:
+                    article.font_color || '#222222',
+
+                lineHeight:
+                    article.line_height || 1.7,
+
+                backgroundImage:
+                    backgroundImage
+                    ? `url(${backgroundImage})`
+                    : 'none'
+            }"
         >
 
-            <div class="meta">
+            {{ article.content }}
 
-                <span>
-                    {{ article.category }}
-                </span>
+        </div>
 
-
-                <span>
-                    {{ article.date }}
-                </span>
-
-            </div>
+    </main>
 
 
-            <h1>
-                {{ article.title }}
-            </h1>
+    <main
+        v-else
+        class="not-found"
+    >
+
+        <h1>
+            уншиж байна...
+        </h1>
 
 
-            <p class="author">
-                {{ article.author }}
-            </p>
+        <p>
+
+        </p>
 
 
-            <!-- Монгол бичгийн уншигч -->
+        <router-link to="/">
 
-            <div
-                class="mongol-reader"
-                :style="{
-                    fontFamily:
-                        `${article.font || 'MongolianScript'}, serif`,
+        </router-link>
 
-                    fontSize:
-                        `${article.font_size || 18}px`,
+    </main>
 
-                    color:
-                        article.font_color || '#222222',
+</div>
 
-                    lineHeight:
-                        article.line_height || 1.7,
-
-                    backgroundImage:
-                        backgroundImage
-                        ? `url(${backgroundImage})`
-                        : 'none'
-                }"
-            >
-
-                {{ article.content }}
-
-            </div>
-
-        </main>
-
-
-        <main
-            v-else
-            class="not-found"
-        >
-
-            <h1>
-                уншиж байна...
-            </h1>
-
-
-            <p>
-
-            </p>
-
-
-            <router-link to="/">
-
-            </router-link>
-
-        </main>
-
-    </div>
-
-</template>
-
-
-<style>
+</template><style>
 
 @font-face {
 
